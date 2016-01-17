@@ -1,0 +1,37 @@
+{
+    "name": "bootstrap-markdown-editor",
+    "version": "1.0.0",
+    "homepage": "https://github.com/kartik-v/bootstrap-markdown-editor",
+    "authors": [
+        "Kartik Visweswaran <kartikv2@gmail.com>"
+    ],
+    "description": "A Boostrap styled markdown editor that offers configurable toolbar, live preview, export, fullscreen mode, and more features.",
+    "main": [
+        "./css/markdown-editor.min.css",
+        "./js/markdown-editor.min.js"
+    ],
+    "keywords": [
+        "bootstrap",
+        "markdown",
+        "editor",
+        "extra",
+        "markdown extra",
+        "input",
+        "preview",
+        "export"
+    ],
+    "dependencies": {
+        "jquery": ">= 1.9.0",
+        "bootstrap": "~3"
+    },
+    "license": "BSD-3-Clause",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "composer.json",
+        "examples",
+        "bower_components",
+        "test",
+        "tests"
+    ]
+}
