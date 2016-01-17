@@ -1,5 +1,5 @@
 {
-  "name": "kartik-v/bootstrap-markdown-editor",
+  "name": "kartik-v/krajee-markdown-editor",
   "description": "A Boostrap styled markdown editor that offers configurable toolbar, live preview, export, fullscreen mode, and more features.",
   "keywords": [
     "bootstrap",
@@ -11,7 +11,7 @@
     "preview",
     "export"
   ],
-  "homepage": "https://github.com/kartik-v/bootstrap-markdown-editor",
+  "homepage": "https://github.com/kartik-v/krajee-markdown-editor",
   "license": "BSD-3-Clause",
   "authors": [
     {

@@ -1,5 +1,5 @@
 /*!
- * French Translations for bootstrap-markdown-editor
+ * French Translations for krajee-markdown-editor
  *
  * This file must be loaded after 'markdown-editor.js'. Patterns in braces '{}', or
  * any HTML markup tags in the messages must not be converted or translated.

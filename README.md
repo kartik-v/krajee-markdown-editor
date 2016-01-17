@@ -1,11 +1,11 @@
-bootstrap-markdown-editor
-=========================
+krajee-markdown-editor
+======================
 
-[![Bower version](https://badge.fury.io/bo/bootstrap-markdown-editor.svg)](http://badge.fury.io/bo/bootstrap-markdown-editor)
-[![Latest Stable Version](https://poser.pugx.org/kartik-v/bootstrap-markdown-editor/v/stable)](https://packagist.org/packages/kartik-v/bootstrap-markdown-editor)
-[![License](https://poser.pugx.org/kartik-v/bootstrap-markdown-editor/license)](https://packagist.org/packages/kartik-v/bootstrap-markdown-editor)
-[![Packagist Downloads](https://poser.pugx.org/kartik-v/bootstrap-markdown-editor/downloads)](https://packagist.org/packages/kartik-v/bootstrap-markdown-editor)
-[![Monthly Downloads](https://poser.pugx.org/kartik-v/bootstrap-markdown-editor/d/monthly)](https://packagist.org/packages/kartik-v/bootstrap-markdown-editor)
+[![Bower version](https://badge.fury.io/bo/krajee-markdown-editor.svg)](http://badge.fury.io/bo/krajee-markdown-editor)
+[![Latest Stable Version](https://poser.pugx.org/kartik-v/krajee-markdown-editor/v/stable)](https://packagist.org/packages/kartik-v/krajee-markdown-editor)
+[![License](https://poser.pugx.org/kartik-v/krajee-markdown-editor/license)](https://packagist.org/packages/kartik-v/krajee-markdown-editor)
+[![Packagist Downloads](https://poser.pugx.org/kartik-v/krajee-markdown-editor/downloads)](https://packagist.org/packages/kartik-v/krajee-markdown-editor)
+[![Monthly Downloads](https://poser.pugx.org/kartik-v/krajee-markdown-editor/d/monthly)](https://packagist.org/packages/kartik-v/krajee-markdown-editor)
 
 A Boostrap styled markdown editor that converts a native HTML textarea to an advanced markdown editor. The editor offers live preview, export, full screen mode, and more features. Can support any markdown parser via javascript library / method or even a server based parser via an ajax action. The editor by default is built to support CommonMark spec parsing using [markdown-it JS based parser](https://markdown-it.github.io/). Other markdown parsers are configurable (both as a server call OR a local JS method/library). In addition, the plugin allows custom button actions and properties to be setup.
 
@@ -18,7 +18,7 @@ A Boostrap styled markdown editor that converts a native HTML textarea to an adv
     - [Safe](https://github.com/markdown-it/markdown-it/tree/master/docs/security.md) by default.
     - Community-written __[plugins](https://www.npmjs.org/browse/keyword/markdown-it-plugin)__ and [other packages](https://www.npmjs.org/browse/keyword/markdown-it) on npm.
 - In addition to supporting all common markdown syntax formats, this also includes support for various `markdown-it` plugins like emojis, smart arrows, checkboxes, subscript, superscript, definition list, footnote, abbreviation, marked / inserted text etc.
-- Advanced additional support for emojis and emoticons to be inserted. The editor also supports using rendering emojis using [twitter emojis {twemoji}](https://github.com/twitter/twemoji). Note that twitter [twemoji graphics](https://github.com/twitter/twemoji) are licensed under [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+- Advanced additional support for emojis and emoticons to be inserted. The editor also supports using rendering emojis using [twitter emojis {twemoji}](https://github.com/twitter/twemoji).
 - The editor can be configured to use any markdown based parser OR even use a server based parsing via AJAX action.
 - Inbuilt live preview and conversion of the markdown text to HTML formatted text. The editor can be toggled and configured to be set in one of the three modes:
    - Editor Mode: Displays only the editor for editing the markdown text.
@@ -61,22 +61,22 @@ View the [plugin documentation](http://plugins.krajee.com/markdown-editor) and [
 ### Using Bower
 You can use the `bower` package manager to install. Run:
 
-    bower install bootstrap-markdown-editor
+    bower install krajee-markdown-editor
 
 ### Using Composer
 You can use the `composer` package manager to install. Either run:
 
-    $ php composer.phar require kartik-v/bootstrap-markdown-editor "@dev"
+    $ php composer.phar require kartik-v/krajee-markdown-editor "@dev"
 
 or add:
 
-    "kartik-v/bootstrap-markdown-editor": "@dev"
+    "kartik-v/krajee-markdown-editor": "@dev"
 
 to your composer.json file
 
 ### Manual Install
 
-You can also manually install the plugin easily to your project. Just download the source [ZIP](https://github.com/kartik-v/bootstrap-markdown-editor/zipball/master) or [TAR ball](https://github.com/kartik-v/bootstrap-markdown-editor/tarball/master) and extract the plugin assets (css and js folders) into your project.
+You can also manually install the plugin easily to your project. Just download the source [ZIP](https://github.com/kartik-v/krajee-markdown-editor/zipball/master) or [TAR ball](https://github.com/kartik-v/krajee-markdown-editor/tarball/master) and extract the plugin assets (css and js folders) into your project.
 
 ## Usage
 
@@ -152,8 +152,8 @@ Alternatively, you can directly call the plugin options by setting data attribut
 
 ## Translations
 
-As shown in the installation section, translations are now enabled with release 4.1.8. You can load a locale file `/markdown-editor_locale_<lang>.js` after the core `markdown-editor.min.js` file, where `<lang>` is the language code (e.g. `de`, `fr` etc.). If  locale file does not exist, you can submit a translation for the new language via a [new pull request to add to this folder](https://github.com/kartik-v/bootstrap-markdown-editor/tree/master/js). Use the [sample locale file](https://github.com/kartik-v/bootstrap-markdown-editor/tree/master/js/markdown-editor_locale_LANG.js) to copy and create a translation configuration for your own language.
+As shown in the installation section, you can load a locale file `/markdown-editor_locale_<lang>.js` after the core `markdown-editor.min.js` file, where `<lang>` is the language code (e.g. `de`, `fr` etc.). If  locale file does not exist, you can submit a translation for the new language via a [new pull request to add to this folder](https://github.com/kartik-v/krajee-markdown-editor/tree/master/js). Use the [sample locale file](https://github.com/kartik-v/krajee-markdown-editor/tree/master/js/markdown-editor_locale_LANG.js) to copy and create a translation configuration for your own language.
 
 ## License
 
-**bootstrap-markdown-editor** is released under the BSD 3-Clause License. See the bundled `LICENSE.md` for details.
+**krajee-markdown-editor** is released under the BSD 3-Clause License. See the bundled `LICENSE.md` for details.

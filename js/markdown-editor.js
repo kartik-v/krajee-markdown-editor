@@ -1,6 +1,6 @@
 /*!
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2016
- * @package bootstrap-markdown-editor
+ * @package krajee-markdown-editor
  * @version 1.0.0
  *
  * A Boostrap styled markdown editor that offers live preview, export, full screen mode, and more features. Can support
@@ -40,8 +40,8 @@
         defaultExportConfig, htmlEncode, parseHtml, isNumber, trimRight, getMarkUp, getBlockMarkUp, setSelectionRange,
         kvUnescape, handler, delay, UndoStack, UndoCommand, MarkdownEditor;
 
-    CREDITS = '<a class="text-info" href="http://plugins.krajee.com/markdown-editor">bootstrap-markdown-editor</a>';
-    CREDITS_MD = '[bootstrap-markdown-editor](http://plugins.krajee.com/markdown-editor)';
+    CREDITS = '<a class="text-info" href="http://plugins.krajee.com/markdown-editor">krajee-markdown-editor</a>';
+    CREDITS_MD = '[krajee-markdown-editor](http://plugins.krajee.com/markdown-editor)';
     EMPTY = '';
     NAMESPACE = '.markdownEditor';
     events = {

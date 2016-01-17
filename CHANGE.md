@@ -1,4 +1,4 @@
-Change Log: `bootstrap-markdown-editor`
+Change Log: `krajee-markdown-editor`
 =======================================
 
 ## version 1.0.0
