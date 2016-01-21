@@ -7,7 +7,7 @@
  * @see http://plugins.krajee.com/markdown-editor
  *
  * Author: Kartik Visweswaran
- * Copyright: 2015, Kartik Visweswaran, Krajee.com
+ * Copyright: 2015 - 2016, Kartik Visweswaran, Krajee.com
  */
 $.fn.markdownEditorLocales.fr = {
     noDataMsg: "aucune donnée de source valides trouvé!",

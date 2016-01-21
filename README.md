@@ -7,7 +7,7 @@ krajee-markdown-editor
 [![Packagist Downloads](https://poser.pugx.org/kartik-v/krajee-markdown-editor/downloads)](https://packagist.org/packages/kartik-v/krajee-markdown-editor)
 [![Monthly Downloads](https://poser.pugx.org/kartik-v/krajee-markdown-editor/d/monthly)](https://packagist.org/packages/kartik-v/krajee-markdown-editor)
 
-A Boostrap styled markdown editor that converts a native HTML textarea to an advanced markdown editor. The editor offers live preview, export, full screen mode, and more features. Can support any markdown parser via javascript library / method or even a server based parser via an ajax action. The editor by default is built to support CommonMark spec parsing using [markdown-it JS based parser](https://markdown-it.github.io/). Other markdown parsers are configurable (both as a server call OR a local JS method/library). In addition, the plugin allows custom button actions and properties to be setup.
+A Boostrap styled markdown editor that converts a native HTML textarea to an advanced markdown editor. The editor offers live preview, export, full screen mode, and more features. The editor includes inbuilt support for markdown parsing using [markdown-it JS based parser](https://markdown-it.github.io/). However, the editor Can support any markdown parser via javascript library / method or even a server based parser via an ajax action. Other markdown parsers are configurable (both as a server call OR a local JS method/library). In addition, the plugin allows custom button actions and properties to be setup.
 
 ## Features
 
@@ -90,8 +90,8 @@ Step 1: Load the following assets in your header. Please read the accompanying c
 <!-- font awesome is needed for toolbar iconic buttons. In case you wish to override icons you can skip this -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
-<!-- load if using code syntax styling via highlight.js -->
-<link href="path/to/plugins/highlight/github-gist.min.css" media="all" rel="stylesheet" type="text/css"/>
+<!-- load any highlight.js CSS theme if using code syntax styling via highlight.js -->
+<link href="path/to/plugins/highlight/default.min.css" media="all" rel="stylesheet" type="text/css"/>
 
 <!-- core scripts -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>

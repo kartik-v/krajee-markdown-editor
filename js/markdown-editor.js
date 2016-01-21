@@ -1682,13 +1682,14 @@
         args.shift();
         this.each(function () {
             var self = $(this), data = self.data('markdownEditor'), options = typeof option === 'object' && option,
-                lang = options.language || self.data('language') || 'en', config = $.fn.markdownEditor.defaults;
+                lang = options.language || self.data('language') || 'en', loc, opts;
 
             if (!data) {
-                if (lang !== 'en' && !isEmpty($.fn.markdownEditorLocales[lang])) {
-                    $.extend(true, config, $.fn.markdownEditorLocales[lang]);
-                }
-                data = new MarkdownEditor(this, $.extend(true, config, options, self.data()));
+                loc = lang !== 'en' && !isEmpty(
+                    $.fn.markdownEditorLocales[lang]) ? $.fn.markdownEditorLocales[lang] : {};
+                opts = $.extend(true, {}, $.fn.markdownEditor.defaults, $.fn.markdownEditorLocales.en, loc, options,
+                    self.data());
+                data = new MarkdownEditor(this, opts);
                 self.data('markdownEditor', data);
             }
 
@@ -1828,8 +1829,6 @@
         emojiSearchHint: 'Search emojis ...',
         loadingMsg: 'Loading ...'
     };
-
-    $.extend(true, $.fn.markdownEditor.defaults, $.fn.markdownEditorLocales.en);
 
     $.fn.markdownEditor.Constructor = MarkdownEditor;
 
