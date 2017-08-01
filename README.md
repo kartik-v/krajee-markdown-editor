@@ -99,7 +99,7 @@ Step 1: Load the following assets in your header. Please read the accompanying c
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" type="text/javascript"></script>
 
 <!-- if using translations for your language then include locale file as mentioned below after markdown-editor.js -->
-<script src="path/to/js/markdown-editor_locale_<lang>.js"></script>
+<script src="path/to/js/locales/<lang>.js"></script>
 
 <!-- load if using code syntax styling via highlight.js -->
 <script src="path/to/plugins/highlight/highlight.min.js" type="text/javascript"></script>
@@ -123,7 +123,7 @@ Step 1: Load the following assets in your header. Please read the accompanying c
 <script src="http://cdnjs.cloudflare.com/ajax/libs/twemoji/1.3.2/twemoji.min.js"></script>
 ```
 
-If you noticed, you need to load the `jquery.min.js` and `bootstrap.min.css` in addition to the `markdown-editor.min.css` and `markdown-editor.min.js`. The locale file `markdown-editor_locale_<lang>.js` can be optionally included for translating for your language if needed. Most of the other CSS and JS are needed for the functionality provided by the relevant plugins as mentioned in the inline comments.
+If you noticed, you need to load the `jquery.min.js` and `bootstrap.min.css` in addition to the `markdown-editor.min.css` and `markdown-editor.min.js`. The locale file `locales/<lang>.js` can be optionally included for translating for your language if needed. Most of the other CSS and JS are needed for the functionality provided by the relevant plugins as mentioned in the inline comments.
 
 Step 2: Initialize the plugin on your page. For example, your markup should be a basic textarea:
 
