@@ -47,14 +47,15 @@ View the [plugin documentation](http://plugins.krajee.com/markdown-editor) and [
 
 ## Pre-requisites  
 
-1. [Bootstrap 3.x](http://getbootstrap.com/)
-2. Latest [JQuery](http://jquery.com/)
-3. Most modern browsers supporting HTML5, CSS3 & JQuery. 
-4. If using the default export feature (without ajax), the [browser must support data uri](http://caniuse.com/#feat=datauri).
-5. If using the default parser feature (without ajax), the [markdown-it javascript parser](https://markdown-it.github.io/) is required. This library is available in the `plugins` directory of the repo.
-6. If using the default code highlighting feature via markdown-it parser, the [highlight.js library](https://highlightjs.org/) is required. This library is available in the `plugins` directory of the repo.
-7. Note most formatting buttons have been configured for the markdown-it parser. For rendering the **emojis**, your Markdown parser must support smileys generation. 
-8. For rendering emojis using [twitter emojis {twemoji}](https://github.com/twitter/twemoji), you need to load the twitter emojis CSS. Note that twitter [twemoji graphics](https://github.com/twitter/twemoji) are licensed under [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+1. [Bootstrap 4.x](http://getbootstrap.com/) or [Bootstrap 3.x](https://getbootstrap.com/docs/3.3/)
+2. [Font Awesome Icons 5.x Free](https://fontawesome.com/icons?d=gallery&m=free) or other icons via your own themes (repo includes FA4 theme for Font Awesome 4.x icons).
+3. Latest [JQuery](http://jquery.com/)
+4. Most modern browsers supporting HTML5, CSS3 & JQuery. 
+5. If using the default export feature (without ajax), the [browser must support data uri](http://caniuse.com/#feat=datauri).
+6. If using the default parser feature (without ajax), the [markdown-it javascript parser](https://markdown-it.github.io/) is required. This library is available in the `plugins` directory of the repo.
+7. If using the default code highlighting feature via markdown-it parser, the [highlight.js library](https://highlightjs.org/) is required. This library is available in the `plugins` directory of the repo.
+8. Note most formatting buttons have been configured for the markdown-it parser. For rendering the **emojis**, your Markdown parser must support smileys generation. 
+9. For rendering emojis using [twitter emojis {twemoji}](https://github.com/twitter/twemoji), you need to load the twitter emojis CSS. Note that twitter [twemoji graphics](https://github.com/twitter/twemoji) are licensed under [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
 ## Installation
 

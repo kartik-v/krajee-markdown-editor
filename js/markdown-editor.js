@@ -1,18 +1,14 @@
 /*!
- * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2017
- * @package krajee-markdown-editor
- * @version 1.0.0
+ * krajee-markdown-editor v1.0.0
+ * http://plugins.krajee.com/krajee-markdown-editor
  *
- * A Boostrap styled markdown editor that offers live preview, export, full screen mode, and more features. Can support
- * any markdown parser via javascript library / method or even a server based parser via an ajax action. The editor by
- * default is built to support CommonMark spec parsing using [markdown-it JS based parser](https://markdown-it.github.io/).
- * Other markdown parsers are configurable (both as a server call OR a local JS method/library). In addition, the plugin
- * allows custom button actions and properties to be setup.
- * 
+ * Krajee Markdown Editor Main Plugin Library
+ *
  * Author: Kartik Visweswaran
- * Copyright: 2015, Kartik Visweswaran, Krajee.com
- * For more JQuery plugins visit http://plugins.krajee.com
- * For more Yii related demos visit http://demos.krajee.com
+ * Copyright: 2014 - 2018, Kartik Visweswaran, Krajee.com
+ *
+ * Licensed under the BSD 3-Clause
+ * https://github.com/kartik-v/krajee-markdown-editor/blob/master/LICENSE.md
  */
 (function (factory) {
     "use strict";
@@ -33,8 +29,9 @@
     "use strict";
 
     $.fn.markdownEditorLocales = {};
+    $.fn.markdownEditorThemes = {};
 
-    var $h, $templates, $events, $defaults, UndoStack, UndoCommand, MarkdownEditor;
+    var $h, $events, $defaults, UndoStack, UndoCommand, MarkdownEditor;
 
     /**
      * Global Helper Object
@@ -45,6 +42,10 @@
         DEFAULT_TIMEOUT: 250,
         EMPTY: '',
         NAMESPACE: '.markdownEditor',
+        LINK_CM: '<a href="http://spec.commonmark.org/" target="_blank">CommonMark</a>',
+        LINK_MI: '<a href="https://markdown-it.github.io/markdown-it/" target="_blank">markdown-it</a>',
+        BS3_VER: '3.3.7',
+        BS4_VER: '4.1.1',
         htmlEncode: function (str) {
             return str === undefined ? '' : str.replace(/&/g, '&amp;')
                 .replace(/</g, '&lt;')
@@ -55,8 +56,12 @@
         parseHtml: function (data) {
             return data === undefined ? '' : $h.kvUnescape(encodeURIComponent(data));
         },
-        create: function (tag) {
-            return $(document.createElement(tag));
+        create: function (tag, attr) {
+            var $el = $(document.createElement(tag));
+            if (!$h.isEmpty(attr)) {
+                $el.attr(attr);
+            }
+            return $el;
         },
         addCss: function ($el, css) {
             if (css) {
@@ -118,15 +123,17 @@
                     scrollPre = document.createElement('pre');
                     input.parentNode.appendChild(scrollPre);
                     style = window.getComputedStyle(input, '');
-                    scrollPre.style.visibility = 'hidden';
-                    scrollPre.style.lineHeight = style.lineHeight;
-                    scrollPre.style.fontFamily = style.fontFamily;
-                    scrollPre.style.fontSize = style.fontSize;
-                    scrollPre.style.padding = 0;
-                    scrollPre.style.border = style.border;
-                    scrollPre.style.outline = style.outline;
-                    scrollPre.style.overflow = 'scroll';
-                    scrollPre.style.letterSpacing = style.letterSpacing;
+                    scrollPre.style = {
+                        visibility: 'hidden',
+                        lineHeight: style.lineHeight,
+                        fontFamily: style.fontFamily,
+                        fontSize: style.fontSize,
+                        padding: 0,
+                        border: style.border,
+                        outline: style.outline,
+                        overflow: 'scroll',
+                        letterSpacing: style.letterSpacing
+                    };
                     $h.setWhitespace(scrollPre, "-moz-pre-wrap");
                     $h.setWhitespace(scrollPre, "-o-pre-wrap");
                     $h.setWhitespace(scrollPre, "-pre-wrap");
@@ -166,94 +173,6 @@
     };
 
     /**
-     * Default HTML markup templates
-     */
-    $templates = {
-        main: '<div class="md-editor" tabindex="0">\n' +
-        '  {header}\n' +
-        '  <table class="md-input-preview">\n' +
-        '    <tr>\n' +
-        '      <td class="md-input-cell">{input}</td>\n' +
-        '      <td class="md-preview-cell">{preview}</td>\n' +
-        '    </tr>' +
-        '  </table>\n' +
-        '  {footer}\n' +
-        '  {dialog}\n' +
-        '</div>',
-        header: '<div class="md-header">\n' +
-        '  <div class="md-toolbar-header-r btn-toolbar pull-right">\n' +
-        '    {toolbarHeaderR}\n' +
-        '  </div>\n' +
-        '  <div class="md-toolbar-header-l btn-toolbar">\n' +
-        '    {toolbarHeaderL}\n' +
-        '  </div>\n' +
-        '  <div class="clearfix">\n' +
-        '  </div>\n' +
-        '</div>',
-        preview: '<div class="md-preview" tabindex="0">\n</div>',
-        footer: '<div class="md-footer">\n' +
-        '  <div class="md-toolbar-footer-r btn-toolbar pull-right">\n' +
-        '    {toolbarFooterR}\n' +
-        '  </div>\n' +
-        '  <div class="md-toolbar-footer-l btn-toolbar">\n' +
-        '    {toolbarFooterL}\n' +
-        '  </div>\n' +
-        '  <div class="clearfix">\n' +
-        '  </div>\n' +
-        '</div>',
-        dialog: '<div class="md-dialog modal fade" tabindex="-1" role="dialog">\n' +
-        '  <div class="modal-dialog">\n' +
-        '    <div class="modal-content">\n' +
-        '      <div class="modal-header">\n' +
-        '        <button type="button" class="close" data-dismiss="modal" aria-label="Close">\n' +
-        '          <span aria-hidden="true">&times,</span>\n' +
-        '        </button>\n' +
-        '        <h4 class="md-dialog-title modal-title"></h4>\n' +
-        '      </div>\n' +
-        '      <div class="modal-body">\n' +
-        '        <input class="md-dialog-input form-control">\n' +
-        '        <div class="md-dialog-content"></div>\n' +
-        '      </div>\n' +
-        '      <div class="modal-footer">\n' +
-        '        <button type="button" class="md-dialog-cancel btn btn-default" data-dismiss="modal">\n' +
-        '          <i class="fa fa-remove"></i> \n' +
-        '        </button>\n' +
-        '        <button type="button" class="md-dialog-ok btn btn-primary" data-dismiss="modal">\n' +
-        '          <i class="fa fa-check"></i> \n' +
-        '        </button>\n' +
-        '      </div>\n' +
-        '    </div>\n' +
-        '</div>',
-        exportHeader: '> - - -\n' +
-        '> Markdown Export\n' +
-        '>: ==============\n' +
-        '> *Generated {today} by {credits}*\n' +
-        '> - - -\n\n',
-        htmlMeta: '<!DOCTYPE html>\n' +
-        '  <meta http-equiv="Content-Type" content="text/html,charset=UTF-8"/>\n' +
-        '  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>\n',
-        exportCssJs: '{exportPrependCssJs}\n' +
-        '<style>\n' +
-        '  body{margin:20px,padding:20px,border:1px solid #ddd,border-radius:5px,}\n' +
-        '  th[align="right"]{text-align:right!important}\n' +
-        '  th[align="center"]{text-align:center!important}\n' +
-        '</style>',
-        prependCss: '<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">',
-        hint: '<ul>\n' +
-        '  <li><p>You may follow the ' +
-        '    <a href="http://spec.commonmark.org/" target="_blank">CommonMark spec</a> and ' +
-        '    <a href="https://github.com/markdown-it/markdown-it">markdown-it</a> syntax for writing your markdown' +
-        '   text.</p></li>\n' +
-        '  <li><p>In order to use the formatting buttons on the toolbar, you typically need to highlight a text ' +
-        '  within the editor on which the formatting is to be applied. You can also undo the format action on the ' +
-        '  highlighted text by clicking the button again (for most buttons).</p></li>\n' +
-        '  <li><p>Keyboard access shortcuts for buttons:</p>' +
-        '    {accessKeys}' +
-        '  </li>\n' +
-        '</ul>'
-    };
-
-    /**
      * List of events
      */
     $events = {
@@ -282,9 +201,88 @@
      * Default settings for buttons and export
      */
     $defaults = {
+        templates: {
+            main: '<div class="md-editor" tabindex="0">\n' +
+            '  {header}\n' +
+            '  <table class="md-input-preview">\n' +
+            '    <tr>\n' +
+            '      <td class="md-input-cell">{input}</td>\n' +
+            '      <td class="md-preview-cell">{preview}</td>\n' +
+            '    </tr>' +
+            '  </table>\n' +
+            '  {footer}\n' +
+            '  {dialog}\n' +
+            '</div>',
+            header: '<div class="md-header">\n' +
+            '  <div class="md-toolbar-header-r btn-toolbar pull-right float-right">\n' +
+            '    {toolbarHeaderR}\n' +
+            '  </div>\n' +
+            '  <div class="md-toolbar-header-l btn-toolbar">\n' +
+            '    {toolbarHeaderL}\n' +
+            '  </div>\n' +
+            '  <div class="clearfix">\n' +
+            '  </div>\n' +
+            '</div>',
+            preview: '<div class="md-preview" tabindex="0">\n</div>',
+            footer: '<div class="md-footer">\n' +
+            '  <div class="md-toolbar-footer-r btn-toolbar pull-right float-right">\n' +
+            '    {toolbarFooterR}\n' +
+            '  </div>\n' +
+            '  <div class="md-toolbar-footer-l btn-toolbar">\n' +
+            '    {toolbarFooterL}\n' +
+            '  </div>\n' +
+            '  <div class="clearfix">\n' +
+            '  </div>\n' +
+            '</div>',
+            dialog: '<div class="md-dialog modal fade" tabindex="-1" role="dialog">\n' +
+            '  <div class="modal-dialog">\n' +
+            '    <div class="modal-content">\n' +
+            '      <div class="modal-header">\n' +
+            '         {header}\n' +
+            '      </div>\n' +
+            '      <div class="modal-body">\n' +
+            '        <input class="md-dialog-input form-control">\n' +
+            '        <input class="md-dialog-title form-control">\n' +
+            '        <div class="md-dialog-content"></div>\n' +
+            '      </div>\n' +
+            '      <div class="modal-footer">\n' +
+            '        <button type="button" class="md-dialog-cancel btn btn-default btn-outline-secondary" data-dismiss="modal">\n' +
+            '          {dialogCancelIcon} {dialogCancelText}\n' +
+            '        </button>\n' +
+            '        <button type="button" class="md-dialog-submit btn btn-primary" data-dismiss="modal">\n' +
+            '          {dialogSubmitIcon} {dialogSubmitText}\n' +
+            '        </button>\n' +
+            '      </div>\n' +
+            '    </div>\n' +
+            '</div>',
+            dialogClose: '<button type="button" class="close" data-dismiss="modal" aria-label="Close">\n' +
+            '  <span aria-hidden="true">&times;</span>\n' +
+            '</button>\n',
+            exportHeader: '> - - -\n' +
+            '> Markdown Export\n' +
+            '> ==============\n' +
+            '> *Generated {today} by {credits}*\n' +
+            '> - - -\n\n',
+            htmlMeta: '<!DOCTYPE html>\n' +
+            '  <meta http-equiv="Content-Type" content="text/html,charset=UTF-8"/>\n' +
+            '  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>\n',
+            exportCssJs: '{exportPrependCssJs}\n' +
+            '<style>\n' +
+            '  body{margin:20px;padding:20px;border:1px solid #ddd;border-radius:5px;}\n' +
+            '</style>',
+            hint: '<ul>\n' +
+            '  <li><p>You may follow the {LINK_CM} specification (generated via {LINK_MI} plugin) for writing your markdown text.</p></li>\n' +
+            '  <li><p>In order to use the formatting buttons on the toolbar, you generally need to highlight a text ' +
+            '  within the editor on which the formatting is to be applied. You can also undo the format action on the ' +
+            '  highlighted text by clicking the button again (for most buttons).</p></li>\n' +
+            '  <li><p>Keyboard access shortcuts for buttons:</p>' +
+            '    {accessKeys}' +
+            '  </li>\n' +
+            '</ul>'
+        },
         icons: {
             undo: 'undo',
-            redo: 'repeat',
+            redo: 'redo',
             bold: 'bold',
             italic: 'italic',
             ins: 'underline',
@@ -294,40 +292,44 @@
             mark: 'eraser',
             paragraph: 'paragraph',
             newline: 'text-height',
-            heading: 'header',
+            heading: 'heading',
             link: 'link',
-            image: 'picture-o',
+            image: 'image',
             indent: 'indent',
             outdent: 'outdent',
             ul: 'list-ul',
             ol: 'list-ol',
             dl: 'th-list',
-            footnote: 'sticky-note-o',
+            footnote: 'sticky-note',
             blockquote: 'quote-right',
             code: 'code',
-            codeblock: 'file-code-o',
+            codeblock: 'file-code',
             hr: 'minus',
-            emoji: 'smile-o',
+            emoji: 'smile',
             fullscreen: 'arrows-alt',
-            hint: 'question-circle',
+            minscreen: 'compress',
+            hint: 'lightbulb',
             modePreview: 'search',
             modeEditor: 'edit',
-            modeSplit: 'arrows-h',
-            export: 'download',
-            exportHtml: 'file-text',
-            exportText: 'file-text-o'
+            modeSplit: 'arrows-alt-h',
+            'export': 'download',
+            exportHtml: 'file-alt',
+            exportText: 'file',
+            alertMsg: 'exclamation-circle',
+            dialogCancel: 'times',
+            dialogSubmit: 'check'
         },
-        accessKeys: {
+        buttonAccessKeys: {
             undo: 'z',
             redo: 'y',
-            bold: '[',
-            italic: ']',
-            ins: '+',
+            bold: 'b',
+            italic: 'i',
+            ins: 'u',
             del: 'x',
-            sup: '~',
-            sub: '^',
+            sup: '^',
+            sub: '~',
             mark: '=',
-            paragraph: 'p',
+            paragraph: '#',
             newline: '0',
             heading1: '1',
             heading2: '2',
@@ -337,17 +339,17 @@
             heading6: '6',
             link: 'l',
             image: 'p',
-            indent: 'i',
-            outdent: 'o',
-            ul: 'u',
-            ol: 'v',
-            dl: 'w',
+            indent: '>',
+            outdent: '<',
+            ul: '*',
+            ol: '9',
+            dl: '+',
             footnote: 'n',
             blockquote: 'q',
-            code: 'c',
-            codeblock: 'b',
+            code: 'j',
+            codeblock: 'k',
             hr: '-',
-            emoji: '`',
+            emoji: ':',
             fullscreen: '.',
             hint: '?',
             modeEditor: '(',
@@ -356,12 +358,12 @@
             exportHtml: 'h',
             exportText: 't'
         },
-        titles: {
+        buttonTitles: {
             undo: 'Undo',
             redo: 'Redo',
             bold: 'Bold',
             italic: 'Italic',
-            ins: 'Inserted Text',
+            ins: 'Underline / Inserted Text',
             del: 'Strike Through',
             sup: 'Superscript',
             sub: 'Subscript',
@@ -387,49 +389,51 @@
             modeEditor: 'Editor mode',
             modePreview: 'Preview mode',
             modeSplit: 'Split mode',
-            export: 'Export content',
+            'export': 'Export content',
             exportHtml: 'Export as HTML',
             exportText: 'Export as Text'
         },
-        labels: {
-            export: 'Export',
+        buttonLabels: {
+            'export': 'Export',
             exportHtml: 'HTML',
             exportText: 'Text'
         },
-        prompts: {
+        buttonPrompts: {
             link: {
-                title: 'Insert Hyperlink',
-                placeholder: 'http://'
+                header: 'Insert Hyperlink',
+                hintInput: 'Enter hyperlink address...',
+                hintTitle: 'Enter text for the link...',
             },
             image: {
-                title: 'Insert Image Link',
-                placeholder: 'http://'
+                header: 'Insert Image Link',
+                hintInput: 'Enter image link address...',
+                hintTitle: 'Enter alternate text for the image...',
             },
             ol: {
-                title: 'Ordered List Starting Number',
-                placeholder: 'Integer starting from 1'
+                header: 'Ordered List Starting Number',
+                hintInput: 'Integer starting from 1'
             },
             codeblock: {
-                title: 'Enter code language',
-                placeholder: 'e.g. html, php, js'
+                header: 'Enter code language',
+                hintInput: 'e.g. html, php, js'
             }
         },
-        actions: {
-            bold: {before: '**', after: '**', default: '**(bold text here)**'},
-            italic: {before: '_', after: '_', default: '_(italic text here)_'},
-            ins: {before: '++', after: '++', default: '_(inserted text here)_'},
-            del: {before: '~~', after: '~~', default: '_(strikethrough text here)_'},
-            mark: {before: '==', after: '==', default: '_(marked text here)_'},
-            sup: {before: '^', after: '^', default: '_(superscript text here)_'},
-            sub: {before: '~', after: '~', default: '_(subscript text here)_'},
-            paragraph: {before: '\n', after: '\n', default: '\n(paragraph text here)\n', inline: true},
+        buttonActions: {
+            bold: {before: '**', after: '**', 'default': '**(bold text here)**'},
+            italic: {before: '_', after: '_', 'default': '_(italic text here)_'},
+            ins: {before: '++', after: '++', 'default': '_(inserted text here)_'},
+            del: {before: '~~', after: '~~', 'default': '_(strikethrough text here)_'},
+            mark: {before: '==', after: '==', 'default': '_(marked text here)_'},
+            sup: {before: '^', after: '^', 'default': '_(superscript text here)_'},
+            sub: {before: '~', after: '~', 'default': '_(subscript text here)_'},
+            paragraph: {before: '\n', after: '\n', 'default': '\n(paragraph text here)\n', inline: true},
             newline: {before: $h.EMPTY, after: '  '},
-            heading1: {before: '# ', default: '# (heading 1 text here)', inline: true},
-            heading2: {before: '## ', default: '## (heading 2 text here)', inline: true},
-            heading3: {before: '### ', default: '### (heading 3 text here)', inline: true},
-            heading4: {before: '#### ', default: '#### (heading 4 text here)', inline: true},
-            heading5: {before: '##### ', default: '##### (heading 5 text here)', inline: true},
-            heading6: {before: '###### ', default: '###### (heading 6 text here)', inline: true},
+            heading1: {before: '# ', 'default': '# (heading 1 text here)', inline: true},
+            heading2: {before: '## ', 'default': '## (heading 2 text here)', inline: true},
+            heading3: {before: '### ', 'default': '### (heading 3 text here)', inline: true},
+            heading4: {before: '#### ', 'default': '#### (heading 4 text here)', inline: true},
+            heading5: {before: '##### ', 'default': '##### (heading 5 text here)', inline: true},
+            heading6: {before: '###### ', 'default': '###### (heading 6 text here)', inline: true},
             indent: function (str) {
                 var ind = '  ', list;
                 if (str.indexOf('\n') < 0) {
@@ -460,25 +464,25 @@
                 return str;
             },
             link: function (str) {
-                return function (link) {
+                return function (link, title) {
                     if (!$h.isEmpty(link)) {
                         if (link.substring(0, 6) !== 'ftp://' && link.substring(0,
                                 7) !== 'http://' && link.substring(0, 8) !== 'https://') {
                             link = 'http://' + link;
                         }
-                        str = '[' + str + '](' + link + ')';
+                        str = '[' + title + '](' + link + ')';
                     }
                     return str;
                 };
             },
             image: function (str) {
-                return function (link) {
+                return function (link, title) {
                     if (!$h.isEmpty(link)) {
                         if (link.substring(0, 6) !== 'ftp://' && link.substring(0,
                                 7) !== 'http://' && link.substring(0, 8) !== 'https://') {
                             link = 'http://' + link;
                         }
-                        str = '![' + str + '](' + link + ')';
+                        str = '![' + title + '](' + link + ')';
                     }
                     return str;
                 };
@@ -652,16 +656,22 @@
             if (!$el.attr('id')) {
                 $el.attr('id', $h.uniqueId());
             }
-            self.$form = self.initForm();
-            self.$element.attr('rows', self.rows);
-            self.buttonIcons = $.extend(true, {}, $defaults.icons, self.buttonIcons);
-            self.buttonTitles = $.extend(true, {}, $defaults.titles, self.buttonTitles);
-            self.buttonLabels = $.extend(true, {}, $defaults.labels, self.buttonLabels);
-            self.buttonPrompts = $.extend(true, {}, $defaults.prompts, self.buttonPrompts);
-            self.buttonAccessKeys = $.extend(true, {}, $defaults.accessKeys, self.buttonAccessKeys);
-            self.buttonActions = $.extend(true, {}, $defaults.actions, self.buttonActions);
-            self.exportConfig = $.extend(true, {}, $defaults.exportConfig, self.exportConfig);
-            self.defaultInputHeight = self.$element.height();
+            self.isBs4 = String(self.bsVersion).substring(0, 1) === '4';
+            if (self.exportPrependCssJs === undefined) {
+                self.exportPrependCssJs = '<link href="https://maxcdn.bootstrapcdn.com/bootstrap/' +
+                    (self.isBs4 ? '4.1.1' : '3.3.7') + '/css/bootstrap.min.css" rel="stylesheet">';
+            }
+            $el.attr('rows', self.rows);
+            self.setDefaults('icons');
+            self.setDefaults('buttonTitles');
+            self.setDefaults('buttonLabels');
+            self.setDefaults('buttonPrompts');
+            self.setDefaults('buttonAccessKeys');
+            self.setDefaults('buttonActions');
+            self.setDefaults('exportConfig');
+            self.setDefaults('templates');
+            self.defaultInputHeight = $el.height();
+            /** @namespace window.markdownit */
             if ($h.isEmpty(self.parserUrl) && self.parserMethod === undefined && window.markdownit) {
                 self.parserMethod = function (data) {
                     var md = window.markdownit(self.markdownItOptions);
@@ -694,11 +704,25 @@
             }
             self.render();
             self.$preview.height(self.defaultInputHeight);
+            $el.height(self.defaultInputHeight);
             if (self.startFullScreen) {
                 self.toggleFullScreen();
             }
             self.reset();
             self.listen();
+        },
+        setDefaults: function(param) {
+            var self = this;
+            if (typeof self[param] !== "function") {
+                self[param] = $.extend(true, {}, $defaults[param], self[param]);
+            }
+        },
+        getConfig: function(prop, key) {
+            var self = this, config = self[prop];
+            if (config === undefined) {
+                return null;
+            }
+            return typeof config === "function" ? config(key) : config[key]
         },
         handleEvent: function ($element, event, method) {
             var self = this, ev = event + $h.NAMESPACE;
@@ -712,7 +736,7 @@
                 $search = self.$editor.find('.md-emoji-search'), eKeydown = $events.keydown;
             self.parseButtons();
             $cont.find('.dropdown-toggle').dropdown();
-            self.handleEvent(self.$dialogInput, eKeydown, 'keydownDialog');
+            self.handleEvent(self.$dialog, eKeydown, 'keydownDialog');
             self.handleEvent($el, eFocus, 'focus');
             self.handleEvent($preview, eFocus, 'focus');
             self.handleEvent($el, eBlur, 'blur');
@@ -797,7 +821,7 @@
                 if (isHeading || isExport || isEmoji) {
                     event.preventDefault();
                     if (isExport) {
-                        self.export(key);
+                        self.exportData(key);
                         return;
                     }
                     if (isEmoji) {
@@ -811,7 +835,7 @@
                         break;
                     case 'hint':
                         ttl = self.getTitle(key) + ' <small>' + $h.CREDITS + '</small>';
-                        self.showPopup(ttl, self.renderHint());
+                        self.showPopup(ttl, self.renderHint(), true);
                         break;
                     default:
                         txt = self.process(key);
@@ -897,10 +921,14 @@
         keydownDialog: function (event) {
             var self = this;
             $h.handler(event, function () {
-                if (event.keyCode === 13) {
-                    self.$dialogOk.trigger('click');
+                var $targ = $(event.target), isInput = $targ.hasClass('md-dialog-input'), 
+                    isTitle = $targ.hasClass('md-dialog-title');
+                if (event.keyCode === 13 && (isInput || isTitle)) {
                     event.stopPropagation();
                     event.preventDefault();
+                    if (isTitle || !self.$dialogTitle.is(':visible')) {
+                        self.$dialogSubmit.trigger('click');
+                    }
                 }
             });
         },
@@ -1088,45 +1116,73 @@
             $cont.remove();
         },
         getLayout: function (template) {
-            return this.templates[template] || $h.EMPTY;
-        },
-        initForm: function () {
-            var self = this, $form = $('#' + self.exportFormId), $filetype, $filename, $content;
-            if (!self.exportFormId || !$form.length) {
-                $form = $h.create('form');
+            var self = this, header, title, btnClose, out = self.getConfig('templates', template) || $h.EMPTY, tag;
+            if (template === 'dialog')  {
+                tag = self.isBs4 ? 'h5' : 'h4';
+                title = '<' + tag + ' class="md-dialog-head-title modal-title"></' + tag + '>';
+                btnClose = self.getConfig('templates', 'dialogClose');
+                header = self.isBs4 ? title + '\n' + btnClose : btnClose + '\n' + title;
+                out = out.replace('{header}', header)
+                    .replace('{dialogCancelIcon}', self.renderIcon('dialogCancel'))
+                    .replace('{dialogSubmitIcon}', self.renderIcon('dialogSubmit'))
+                    .replace('{dialogCancelText}', self.dialogCancelText)
+                    .replace('{dialogSubmitText}', self.dialogSubmitText);
             }
-            $form.attr({action: self.exportUrl, method: 'post', target: '_blank'});
-            $filetype = $h.create('input').attr({type: 'hidden', name: 'export_type'});
-            $filename = $h.create('input').attr({type: 'hidden', name: 'export_filename', value: self.exportFileName});
-            $content = $h.create('textarea').attr({name: 'export_content'}).val(self.noDataMsg);
-            return $form.append($filetype, $filename, $content).hide();
+            return out;
         },
-        showPopup: function (title, content) {
+        submitExportForm: function (extension, content) {
+            var self = this, $form = $h.create('form'), $filetype, $filename, $content, 
+                ifrm = self.$element.attr('id') + '-iframe', addlInputs = self.exportAddlData;
+            if (!$('#' + ifrm).length) {
+                $h.create('iframe', {id: ifrm, name: ifrm, css: {display: 'none'}}).appendTo('body');
+            }
+            $filetype = $h.create('input', {type: 'hidden', name: 'export_type', value: extension});
+            $filename = $h.create('input', {type: 'hidden', name: 'export_filename', value: self.exportFileName});
+            $content = $h.create('input', {name: 'export_content', css: {display: 'none'}}).val(content || self.noDataMsg);
+            $form.attr({target: ifrm, action: self.exportUrl, method: self.exportMethod});
+            $form.append($filetype, $filename, $content);
+            if (addlInputs) {
+                $form.append(typeof addlInputs === 'function' ? addlInputs() : addlInputs);
+            }
+            $form.appendTo('body').hide().submit().remove();
+        },
+        showPopup: function (header, content, isLarge) {
             var self = this, ev = $events.modalShown;
-            self.$dialogTitle.html(title);
+            self.$dialogMain.removeClass('modal-lg');
+            if (isLarge) {
+                self.$dialogMain.addClass('modal-lg');
+            }
+            self.$dialogHeadTitle.html(header);
             self.$dialogContent.html(content).show();
             self.$dialogInput.hide();
+            self.$dialogTitle.hide();
             self.$dialogClose.show();
             self.$dialogHeader.show();
             self.$dialogFooter.hide();
-            self.$dialogOk.off($events.click);
+            self.$dialogSubmit.off($events.click);
             self.$dialog.modal('show');
             self.$dialog.off(ev).on(ev, function () {
                 self.$dialogClose.focus();
                 self.$dialog.off(ev);
             });
         },
-        showDialog: function (key, callback) {
-            var self = this, prompts = self.buttonPrompts[key], ttl = (prompts.title || $h.EMPTY), str,
-                icon = self.renderIcon(key), plc = prompts.placeholder || $h.EMPTY, ev = $events.modalShown;
-            self.$dialogTitle.html(icon ? icon + ' ' + ttl : ttl);
+        showDialog: function (key, callback, str) {
+            var self = this, prompts = self.getConfig('buttonPrompts', key), hdr = (prompts.header || $h.EMPTY), str,
+                icon = self.renderIcon(key), p1 = prompts.hintInput || $h.EMPTY, p2 = prompts.hintTitle,
+                ev = $events.modalShown;
+            self.$dialogMain.removeClass('modal-lg');
+            self.$dialogHeadTitle.html(icon ? icon + ' ' + hdr : hdr);
             self.$dialogContent.hide();
+            self.$dialogTitle.hide().val(str || $h.EMPTY);
             self.$dialogClose.show();
             self.$dialogHeader.show();
             self.$dialogFooter.show();
-            self.$dialogInput.show().val($h.EMPTY).attr('placeholder', plc);
-            self.$dialogOk.off($events.click).on($events.click, function () {
-                str = callback(self.$dialogInput.val());
+            self.$dialogInput.show().val($h.EMPTY).attr('placeholder', p1);
+            if (p2 && !str) {
+                self.$dialogTitle.show().attr('placeholder', p2);
+            }
+            self.$dialogSubmit.off($events.click).on($events.click, function () {
+                str = callback(self.$dialogInput.val(), self.$dialogTitle.val());
                 if (!$h.isEmpty(str)) {
                     self.replaceSelected(str);
                 }
@@ -1145,7 +1201,7 @@
             } else {
                 $el.trigger(ev);
             }
-            return !ev.isDefaultPrevented();
+            return !ev.isDefaultPrevented() || ev.result === false;
         },
         showPreviewMsg: function (msg) {
             var self = this, $preview = self.$preview, alert = self.getAlert(msg, self.previewErrorTitle);
@@ -1173,7 +1229,9 @@
                 } else {
                     if (typeof postProcess === "object") {
                         $.each(postProcess, function (key, val) {
-                            data = data.split(key).join(val);
+                            if (key !== val) {
+                                data = data.split(key).join(val);
+                            }
                         });
                     }
                 }
@@ -1306,7 +1364,7 @@
         },
         process: function (key) {
             var self = this, $el = self.$element, str = self.getSelected(), len = str.length, out, def, bef, aft,
-                action = self.buttonActions[key];
+                action = self.getConfig('buttonActions', key);
             $el.focus();
             if (key === 'undo' || key === 'redo') {
                 return '';
@@ -1317,7 +1375,7 @@
             if (typeof action === "function") {
                 out = action(str);
                 if (typeof out === "function") {
-                    self.showDialog(key, out);
+                    self.showDialog(key, out, str);
                     return $h.EMPTY;
                 }
                 return out;
@@ -1325,44 +1383,37 @@
             if (typeof action === "object" && (action.before !== undefined || action.after !== undefined)) {
                 bef = $h.isEmpty(action.before) ? $h.EMPTY : action.before;
                 aft = $h.isEmpty(action.after) ? $h.EMPTY : action.after;
-                def = action.default;
+                def = action['default'];
                 out = action.inline ? $h.getMarkUp(str, bef, aft) : $h.getBlockMarkUp(str, bef, aft);
                 return def ? (len > 0 ? out : def) : out;
             }
             return $h.EMPTY;
         },
         download: function (key, content) {
-            var self = this, $form = self.$form, config = self.exportConfig[key], $a = $h.create('a'),
-                ext = config.ext || '', uri = config.uri || '';
+            var self = this, $a, config = self.getConfig('exportConfig', key), ext = config.ext || '', uri = config.uri || '';
             if (!$h.isEmpty(self.exportUrl)) {
-                $form.find('[name="export_type"]').val(ext);
-                $form.find('[name="export_content"]').val(content);
-                $form.submit();
+                self.submitExportForm(ext, content);
                 return;
             }
             uri = uri + window.btoa(content);
-            $a.attr({
-                'href': uri,
-                'target': '_blank',
-                'download': self.getFileName(key)
-            }).insertAfter($form);
+            $a = $h.create('a').attr({'href': uri, 'download': self.getFileName(key)}).appendTo('body');
             $a[0].click();
             $a.remove();
         },
         getLabel: function (key) {
             var self = this;
-            return self.renderIcon(key) + ' ' + (self.buttonLabels[key] || $h.EMPTY);
+            return self.renderIcon(key) + ' ' + (self.getConfig('buttonLabels', key) || $h.EMPTY);
         },
         getTitle: function (key) {
             var self = this;
-            return self.renderIcon(key) + ' ' + (self.buttonTitles[key] || $h.EMPTY);
+            return self.renderIcon(key) + ' ' + (self.getConfig('buttonTitles', key) || $h.EMPTY);
         },
         getProgress: function (msg) {
             return '<div class="md-loading">' + msg + '</div>';
         },
         getAlert: function (msg, head, hideIcon) {
             var self = this;
-            head = head ? '<h4>' + (hideIcon ? '' : self.alertMsgIcon) + head + '</h4>' : '';
+            head = head ? '<h4>' + (hideIcon ? '' : self.renderIcon('alertMsg')) + head + '</h4>' : '';
             return '<div class="' + self.alertMsgCss + ' md-alert">' + head + msg + '</div>';
         },
         showPopupAlert: function (heading, content) {
@@ -1395,7 +1446,7 @@
                 self.getLayout('htmlMeta') + self.getLayout('exportCssJs').replace('{exportPrependCssJs}', preCss) +
                 '\n</head>\n<body>\n' + data + '\n</body>\n</html>';
         },
-        export: function (key) {
+        exportData: function (key) {
             var self = this, source = self.$element.val(), tTxt = self.getTitle('exportText'), out,
                 tHtm = self.getTitle('exportHtml'), noDataMsg = self.noDataMsg, errorMsg = self.exportErrorMsg,
                 noUrlMsg = self.noExportUrlMsg, today = self.today || new Date();
@@ -1441,20 +1492,22 @@
             });
         },
         renderIcon: function (key) {
-            var self = this, icon = key && self.buttonIcons[key] || $h.EMPTY;
+            var self = this, icon = self.getConfig('icons', key) || $h.EMPTY;
             if (icon) {
-                return '<span class="' + self.buttonIconCssPrefix + icon + '"></span>';
+                return '<span class="' + self.iconCssPrefix + icon + '"></span>';
             }
             return $h.EMPTY;
         },
         render: function () {
             var self = this, $el = self.$element, $container = $h.create('div').addClass('md-container'), $temp, out,
                 main = self.getLayout('main'), TEMP_CSS = 'md-editor-input-temporary', $form, $target,
-                contId = $el.attr('id') + '-container', theme = self.theme || 'krajee';
+                contId = $el.attr('id') + '-container';
             if (!main) {
                 return $h.EMPTY;
             }
-            $h.addCss($container, 'md-' + theme);
+            if (self.theme) {
+                $h.addCss($container, 'md-' + self.theme);
+            }
             out = main.replace('{input}', '<div class="' + TEMP_CSS + '"></div>')
                 .replace('{header}', self.renderHeader())
                 .replace('{footer}', self.renderFooter())
@@ -1472,12 +1525,14 @@
             self.$btnUndo = $container.find('.md-btn-undo');
             self.$btnRedo = $container.find('.md-btn-redo');
             self.$dialog = $container.find('.md-dialog');
-            self.$dialogTitle = self.$dialog.find('.md-dialog-title');
+            self.$dialogHeadTitle = self.$dialog.find('.md-dialog-head-title');
             self.$dialogInput = self.$dialog.find('.md-dialog-input');
+            self.$dialogTitle = self.$dialog.find('.md-dialog-title');
             self.$dialogContent = self.$dialog.find('.md-dialog-content');
-            self.$dialogCancel = self.$dialog.find('.md-dialog-cancel').append(self.dialogCancelText);
-            self.$dialogOk = self.$dialog.find('.md-dialog-ok').append(self.dialogOkText);
+            self.$dialogCancel = self.$dialog.find('.md-dialog-cancel');
+            self.$dialogSubmit = self.$dialog.find('.md-dialog-submit');
             self.$dialogClose = self.$dialog.find('.close');
+            self.$dialogMain = self.$dialog.find('.modal-dialog');
             self.$dialogHeader = self.$dialog.find('.modal-header');
             self.$dialogFooter = self.$dialog.find('.modal-footer');
             self.$mode = $container.find('.md-btn-mode');
@@ -1500,9 +1555,6 @@
                     $container.find('button[data-key="' + key + '"]').parent().addClass('dropup');
                 }
             });
-            $form = $el.closest('form');
-            $target = $form.length ? $form : $container;
-            self.$form.insertAfter($target);
         },
         _toolbar: function (type) {
             var self = this, btns = [];
@@ -1520,30 +1572,36 @@
             return btns;
         },
         renderHint: function () {
-            var self = this, txt = self.hintText, keys, icon, ttl, i, isHeading, css, tag = '{accessKeys}', btns;
+            var self = this, txt, tag = '{accessKeys}', keys, icon, ttl, i, isHead, css;
+            txt = self.getLayout('hint').replace('{LINK_CM}', $h.LINK_CM).replace('{LINK_MI}', $h.LINK_MI);
             if (txt.indexOf(tag) === -1) {
                 return txt;
             }
             keys = '<div class="md-hint-access-keys"><ul>';
-            btns = self.getValidButtons();
-            $.each(self.buttonAccessKeys, function (btn, key) {
-                isHeading = btn.length === 8 && btn.substring(0, 7) === 'heading';
-                if (btns.indexOf(btn) === -1 && !isHeading && btn.substring(0, 4) !== 'mode' &&
-                    btn.substring(0, 6) !== 'export') {
-                    return;
-                }
-                if (isHeading) {
-                    i = btn.substring(7);
-                    icon = self.renderIcon('heading') + i;
-                    ttl = self.buttonTitles.heading + ' ' + i;
-                } else {
-                    icon = self.renderIcon(btn);
-                    ttl = self.buttonTitles[btn];
-                }
+            
+            $.each (self.getValidButtons(), function (idx, btn) {
+                var key;
                 css = self.buttonCss[btn] || self.defaultButtonCss;
-                keys += '<li title="' + ttl + '"><p>' + '<span class="' + css + '">' + icon +
-                    '</span></p><p><kbd>ALT</kbd> + <code>' + key + '</code></p></li>';
+                if (btn === 'heading') {
+                    for (i = 1; i <= 6; i++) {
+                        icon = self.renderIcon('heading') + i;
+                        key = self.getConfig('buttonAccessKeys', btn + i);
+                        ttl = self.getConfig('buttonTitles', 'heading') + ' ' + i;
+                        keys += '<li title="' + ttl + '"><p>' + '<span class="' + css + '">' + icon +
+                            '</span></p><p><kbd>ALT</kbd> &ndash; <kbd>' + key + '</kbd></p></li>';
+                    }
+                } else {
+                    if (btn.substring(0, 6) !== 'export' && btn.substring(0, 4) !== 'mode') {
+                        key = self.getConfig('buttonAccessKeys', btn);
+                        icon = self.renderIcon(btn);
+                        ttl = self.getConfig('buttonTitles', btn);
+                        keys += '<li title="' + ttl + '"><p>' + '<span class="' + css + '">' + icon +
+                        '</span></p><p><kbd>ALT</kbd> &ndash; <kbd>' + key + '</kbd></p></li>';
+                    }
+                }
+                
             });
+            
             keys += '</ul></div>';
             return txt.replace(tag, keys);
         },
@@ -1560,46 +1618,53 @@
             return footer;
         },
         renderToolbar: function (layout, type) {
-            var self = this, tag = '{' + type + '}', out = $h.EMPTY;
+            var self = this, tag = '{' + type + '}', css, btn, out = '', attr = '';
             if (layout.indexOf(tag) === -1) {
                 return layout;
             }
+            console.log( type);
             $.each(self[type], function (k, v) {
                 if (!$.isArray(v)) {
                     v = [v];
                 }
-                out += '<div class="btn-group" role="group">\n';
+                btn = '';
+                css = self.buttonGroupCss;
                 $.each(v, function (grp, key) {
-                    out += self.renderButton(key) + '\n';
+                    btn += self.renderButton(key) + '\n';
+                    if (key === 'mode') {
+                        css += ' btn-group-toggle md-btn-mode';
+                        attr = ' data-toggle="buttons"';
+                    }
                 });
-                out += '</div>\n';
+                out += '<div class="' + css + '" role="group"' + attr + '>\n' + btn + '</div>\n';
             });
+            
             return layout.replace('{' + type + '}', out);
         },
         getFileName: function (key) {
-            var self = this, name = self.exportFileName,
-                ext = self.exportConfig[key] && self.exportConfig[key].ext || '';
+            var self = this, name = self.exportFileName, cfg = self.getConfig('exportConfig', key),
+                ext = cfg && cfg.ext || '';
             return ext ? name + '.' + ext : name;
         },
         renderMenuItem: function (type, btn) {
-            var self = this, $a = $h.create('a'), $div = $h.create('div'), key = type + btn, title, out;
+            var self = this, $a, $div = $h.create('div'), key = type + btn, title, out;
             if (type === 'export') {
-                title = self.buttonTitles[key];
+                title = self.getConfig('buttonTitles', key);
                 out = self.getLabel(key);
             } else {
-                title = self.buttonTitles[type];
+                title = self.getConfig('buttonTitles', type);
                 out = title + ' ' + btn;
             }
-            $a.attr({
+            $a = $h.create('a').attr({
                 'href': '#',
-                'class': 'md-btn-' + type + ' md-btn-' + key,
+                'class': 'dropdown-item md-btn-' + type + ' md-btn-' + key,
                 'title': title,
-                'accesskey': self.buttonAccessKeys[key],
+                'accesskey': self.getConfig('buttonAccessKeys', key),
                 'data-key': key
             }).html(out);
             out = $div.append($a).html();
             $div.remove();
-            return out;
+            return self.isBs4 ? out : '<li>' + out + '</li>';
         },
         getEmojies: function () {
             var self = this, out = '';
@@ -1607,7 +1672,7 @@
                 return '';
             }
             out = '<li class="md-emoji-search"><span class="md-close">&times;</span>' +
-                '<input type="text" class="form-control input-sm" placeholder="' + self.emojiSearchHint + '"></li>';
+                '<input type="text" class="form-control form-control-sm input-sm" placeholder="' + self.emojiSearchHint + '"></li>';
             $.each(window.mdEmojies, function (key, value) {
                 var ttl = ':' + $h.htmlEncode(key) + ':', shortcuts = window.mdEmojiesShortcuts[key] || '', i, lbl;
                 if (shortcuts) {
@@ -1626,19 +1691,20 @@
         },
         getModeButton: function (type) {
             var self = this, css = self.buttonCss[type] || self.defaultButtonCss || '', checked = '',
-                mode = type.substr(4).toLowerCase(), key = self.buttonAccessKeys[type] || '';
+                mode = type.substr(4).toLowerCase(), key = self.getConfig('buttonAccessKeys', type) || '';
             if (self.defaultMode === mode) {
                 css += ' active';
                 checked = ' checked';
             }
-            return '<label class="' + css + '" title="' + self.buttonTitles[type] + '">' +
+            return '<label class="' + css + '" title="' + self.getConfig('buttonTitles', type) + '">' +
                 '<input type="radio" value="' + type + '" name="mdMode" autocomplete="off" accesskey="' + key +
                 '"' + checked + '>' + self.renderIcon(type) + '</label>';
         },
         renderButton: function (key) {
-            var self = this, $btn, $div, icon, title, label, editor, t, i, out, titles = self.buttonTitles, btnCss,
-                isValid = key === 'mode' || self.buttonIcons[key] !== undefined || self.buttonActions[key] !== undefined,
-                labels = self.buttonLabels, dropCss, css = 'md-btn-' + key, accKeys = self.buttonAccessKeys;
+            var self = this, $btn, $div, icon, title, label, t, i, out, btnCss,
+                icon = self.getConfig('icons', key), 
+                isValid = key === 'mode' || icon !== undefined || self.getConfig('buttonActions', key) !== undefined,
+                dropCss, css = 'md-btn-' + key, tag = self.isBs4 && key !== 'emoji' ? 'div' : 'ul';
             if (!isValid || (!self.enableUndoRedo && (key === 'undo' || key === 'redo' || key === 'editor'))) {
                 return $h.EMPTY;
             }
@@ -1646,8 +1712,8 @@
             $div = $h.create('div');
             $btn = $h.create('button').attr({type: 'button', 'data-key': key});
             icon = self.renderIcon(key);
-            title = titles[key] || $h.EMPTY;
-            label = labels[key] || $h.EMPTY;
+            title = self.getConfig('buttonTitles', key) || $h.EMPTY;
+            label = self.getConfig('buttonLabels', key) || $h.EMPTY;
             if (title) {
                 $btn.attr('title', title);
             }
@@ -1656,7 +1722,7 @@
             }
             if (key === 'fullscreen') {
                 icon = '<span class="md-max-icon">' + icon + '</span>' +
-                    '<span class="md-min-icon">' + self.fullScreenMinimizeIcon + '</span>';
+                    '<span class="md-min-icon">' + self.renderIcon('minscreen') + '</span>';
             }
             label = (icon && label) ? icon + ' ' + label : icon + label;
             $div.append($btn);
@@ -1666,38 +1732,31 @@
                 case 'emoji':
                     $btn.html(label + ' ').attr({'data-toggle': 'dropdown'}).append('<span class="caret"></span>');
                     dropCss = self.dropdownCss[key] ? 'dropdown-menu ' + self.dropdownCss[key] : 'dropdown-menu';
-                    out = '<ul class="' + dropCss + '">\n';
-                    switch (key) {
-                        case 'heading':
-                        case 'emoji':
-                            $btn.addClass(btnCss + ' dropdown-toggle md-btn-other');
-                            if (key === 'emoji') {
-                                out += self.getEmojies();
-                                break;
-                            }
+                    out = '<' + tag + ' class="' + dropCss + '">\n';
+                    if (key === 'heading' || key === 'emoji') {
+                        $btn.addClass(btnCss + ' dropdown-toggle md-btn-other');
+                        if (key === 'emoji') {
+                            out += self.getEmojies();
+                        } else {
                             for (i = 1; i < 7; i++) {
                                 t = title + ' ' + i;
-                                out += '<li>' + self.renderMenuItem('heading', i) + '</li>';
+                                out += self.renderMenuItem('heading', i);
                             }
-                            break;
-                        case 'export':
+                        }
+                    } else {
+                        if (key === 'export') {
                             $btn.addClass(btnCss + ' dropdown-toggle');
-                            out += '<li>' + self.renderMenuItem(key, 'Html') + '</li>' +
-                                '<li>' + self.renderMenuItem(key, 'Text') + '</li>';
-                            break;
+                            out += self.renderMenuItem(key, 'Html') +  self.renderMenuItem(key, 'Text');
+                        }
                     }
-                    out += '</ul>';
-                    $div.append(out).attr({'class': 'btn-group', 'role': 'group'});
-                    $div = $h.create('div').append($div);
-                    out = $div.html();
-                    $div.remove();
-                    return out;
+                    out += '</' + tag + '>';
+                    $div.append(out);
+                    return $div.html();
                 case 'mode':
-                    return '<div class="btn-group md-btn-mode" data-toggle="buttons">' +
-                        self.getModeButton('modeEditor') + self.getModeButton('modePreview') +
-                        (self.enableSplitMode ? self.getModeButton('modeSplit') : '') + '</div>';
+                    return  self.getModeButton('modeEditor') + self.getModeButton('modePreview') +
+                        (self.enableSplitMode ? self.getModeButton('modeSplit') : '');
                 default:
-                    $btn.attr('accesskey', accKeys[key]).html(label).addClass(btnCss + ' ' + css + ' md-btn');
+                    $btn.attr('accesskey', self.getConfig('buttonAccessKeys', key)).html(label).addClass(btnCss + ' ' + css + ' md-btn');
                     return $div.html();
             }
         }
@@ -1708,14 +1767,17 @@
         args.shift();
         this.each(function () {
             var self = $(this), data = self.data('markdownEditor'), options = typeof option === 'object' && option,
-                lang = options.language || self.data('language') || 'en', loc, opts;
-
+                theme = options.theme || self.data('theme'), l = {}, t = {},
+                lang = options.language || self.data('language') || $.fn.markdownEditor.defaults.language || 'en', opt;
             if (!data) {
-                loc = lang !== 'en' && !$h.isEmpty(
-                    $.fn.markdownEditorLocales[lang]) ? $.fn.markdownEditorLocales[lang] : {};
-                opts = $.extend(true, {}, $.fn.markdownEditor.defaults, $.fn.markdownEditorLocales.en, loc, options,
-                    self.data());
-                data = new MarkdownEditor(this, opts);
+                if (theme) {
+                    t = $.fn.markdownEditorThemes[theme] || {};
+                }
+                if (lang !== 'en' && !$h.isEmpty($.fn.markdownEditorLocales[lang])) {
+                    l = $.fn.markdownEditorLocales[lang] || {};
+                }
+                opt = $.extend(true, {}, $.fn.markdownEditor.defaults, t, $.fn.markdownEditorLocales.en, l, options, self.data());
+                data = new MarkdownEditor(this, opt);
                 self.data('markdownEditor', data);
             }
 
@@ -1735,8 +1797,9 @@
 
     $.fn.markdownEditor.defaults = {
         language: 'en',
-        theme: 'krajee',
+        theme: null, // default
         rows: 15,
+        bsVersion: 4, // default (set it to 3 for bootstrap 3.x version)
         defaultMode: 'editor',
         enableUndoRedo: true,
         enableExportDataUri: true,
@@ -1744,16 +1807,7 @@
         enableLivePreview: undefined,
         enableScrollSync: true,
         startFullScreen: false,
-        templates: {
-            main: $templates.main,
-            header: $templates.header,
-            preview: $templates.preview,
-            footer: $templates.footer,
-            dialog: $templates.dialog,
-            exportHeader: $templates.exportHeader,
-            htmlMeta: $templates.htmlMeta,
-            exportCssJs: $templates.exportCssJs
-        },
+        templates: {},
         toolbarHeaderL: [
             ['undo', 'redo'],
             ['bold', 'italic', 'ins', 'del', 'sup', 'sub', 'mark'],
@@ -1774,25 +1828,15 @@
         toolbarFooterR: [
             ['mode']
         ],
-        exportPrependCssJs: $templates.prependCss,
-        inputCss: 'md-input',
-        defaultButtonCss: 'btn btn-default',
-        buttonCss: {
-            hint: 'btn btn-info'
-        },
-        dropdownCss: {
-            emoji: 'md-emojies-list pull-right'
-        },
+        exportPrependCssJs: undefined,
         dropUp: {
-            export: true
+            'export': true
         },
-        buttonIconCssPrefix: 'fa fa-',
-        buttonIcons: {},
-        buttonAccessKeys: {},
         parserUrl: $h.EMPTY,
         parserMethod: undefined,
         markdownItOptions: {
-            html: false,
+            html: true,
+            xhtmlOut: true,
             linkify: true,
             typographer: true,
             highlight: function (code) {
@@ -1812,24 +1856,38 @@
             markdownitSmartArrows: {},
             markdownitCheckbox: {
                 divWrap: true,
-                divClass: 'checkbox',
+                divClass: 'form-check checkbox',
                 idPrefix: 'cbx_'
             }
         },
         markdownItEmojies: window.mdEmojies || {},
-        useTwemoji: false,
+        useTwemoji: false, //true,
         exportUrl: $h.EMPTY,
-        exportMethod: $h.EMPTY,
-        exportFormId: $h.EMPTY,
+        exportMethod: 'post',
+        exportAddlData: $h.EMPTY,
         today: $h.EMPTY,
-        alertMsgIcon: '<i class="fa fa-exclamation-circle"></i> ',
-        alertMsgCss: 'alert alert-danger',
         alertFadeDuration: 2000,
         outputParseTimeout: 1800000,
         exportConfig: $defaults.exportConfig,
-        fullScreenMinimizeIcon: '<i class="fa fa-compress"></i>',
+        // following properties are generally theme related
+        inputCss: 'md-input',
+        dropdownCss: {
+            emoji: 'md-emojies-list pull-right float-right'
+        },
+        defaultButtonCss: 'btn btn-default btn-outline-secondary',
+        buttonGroupCss: 'btn-group md-btn-group',
+        buttonCss: {
+            hint: 'btn btn-info',
+        },
+        buttonAccessKeys: {},
+        iconCssPrefix: 'fas fa-fw fa-',
+        icons: {},
+        alertMsgCss: 'alert alert-danger',
         postProcess: {
-            '<table>': '<table class="table table-bordered table-striped">'
+            '<table>': '<table class="table table-bordered table-striped">',
+            '<pre>': '<pre class="md-codeblock">',
+            '<input type="checkbox"': '<input type="checkbox" class="form-check-input"',
+            '<label for="cbx': '<label class="form-check-label" for="cbx'
         }
     };
 
@@ -1840,9 +1898,8 @@
         buttonLabels: {},
         buttonPrompts: {},
         buttonActions: {},
-        hintText: $templates.hint,
         dialogCancelText: 'Cancel',
-        dialogOkText: 'Ok',
+        dialogSubmitText: 'Submit',
         previewErrorTitle: 'Preview Error',
         previewModeTitle: 'Preview Mode',
         noPreviewUrlMsg: 'Markdown preview processor unavailable. Please contact the system administrator.',

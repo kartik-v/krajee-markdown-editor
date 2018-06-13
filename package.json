@@ -10,8 +10,8 @@
         "./css/markdown-editor.min.css",
         "./js/markdown-editor.min.js"
     ],
-    "repository" : {
-        "type": "git", 
+    "repository": {
+        "type": "git",
         "url": "https://github.com/kartik-v/krajee-markdown-editor.git"
     },
     "bugs": {

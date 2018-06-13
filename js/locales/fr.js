@@ -3,11 +3,10 @@
  *
  * This file must be loaded after 'markdown-editor.js'. Patterns in braces '{}', or
  * any HTML markup tags in the messages must not be converted or translated.
- *
+ * 
  * @see http://plugins.krajee.com/markdown-editor
  *
- * Author: Kartik Visweswaran
- * Copyright: 2014 - 2017, Kartik Visweswaran, Krajee.com
+ * NOTE: this file must be saved in UTF-8 encoding.
  */
 $.fn.markdownEditorLocales.fr = {
     noDataMsg: "aucune donnée de source valides trouvé!",
@@ -71,26 +70,24 @@ $.fn.markdownEditorLocales.fr = {
         }
     },
     buttonActions: {
-        bold: {default: "**(texte en gras ici)**"},
-        italic: {default: "_(le texte en italique ici)_"},
-        ins: {default: "_(insérer le texte ici)_"},
-        del: {default: "_(texte barré ici)_"},
-        mark: {default: "_(texte marqué ici)_"},
-        sup: {default: "_(texte en exposant ici)_"},
-        sub: {default: "_(texte en indice ici)_"},
-        paragraph: {default: "\n(paragraphe texte ici)\n"},
-        heading1: {default: "# (rubrique 1 texte ici)"},
-        heading2: {default: "## (la rubrique 2 texte ici)"},
-        heading3: {default: "### (la rubrique 3 texte ici)"},
-        heading4: {default: "#### (la rubrique 4 texte ici)"},
-        heading5: {default: "##### (la rubrique 5 texte ici)"},
-        heading6: {default: "###### (la rubrique 6 texte ici)"}
+        bold: {markup: "**(texte en gras ici)**"},
+        italic: {markup: "_(le texte en italique ici)_"},
+        ins: {markup: "_(insérer le texte ici)_"},
+        del: {markup: "_(texte barré ici)_"},
+        mark: {markup: "_(texte marqué ici)_"},
+        sup: {markup: "_(texte en exposant ici)_"},
+        sub: {markup: "_(texte en indice ici)_"},
+        paragraph: {markup: "\n(paragraphe texte ici)\n"},
+        heading1: {markup: "# (rubrique 1 texte ici)"},
+        heading2: {markup: "## (la rubrique 2 texte ici)"},
+        heading3: {markup: "### (la rubrique 3 texte ici)"},
+        heading4: {markup: "#### (la rubrique 4 texte ici)"},
+        heading5: {markup: "##### (la rubrique 5 texte ici)"},
+        heading6: {markup: "###### (la rubrique 6 texte ici)"}
     },
-    hintText: "<ul><li><p>Vous pouvez suivre le " + "<a href='http://spec.commonmark.org/' target='_blank'> " +
-    "CommonMark spec </a> et <a href = 'https://github.com/markdown-it/markdown-it'>markdown-it </a> " +
-    "syntaxe pour écrire votre texte de démarque.</p></li>" +
-    "<li><p>Pour utiliser les boutons de mise en forme sur la barre d'outils, vous devez généralement de mettre en évidence un texte " +
-    "dans l'éditeur sur lequel la mise en forme doit être appliquée. Vous pouvez également annuler l'action de format sur le " +
+    hintText: "<ul><li><p>Vous pouvez suivre le {LINK_CM} spécification (généré via {LINK_MI} plugin) pour écrire votre texte de démarque.</p></li>" +
+    "<li><p>Pour utiliser les boutons de mise en forme de la barre d'outils, vous devez généralement mettre en surbrillance un texte " +
+    "dans l'éditeur sur lequel le formatage doit être appliqué. Vous pouvez également annuler l'action de format sur le " +
     "texte en surbrillance en cliquant à nouveau sur le bouton (pour la plupart des boutons).</p></li>" +
     "<li><p>raccourcis d'accès au clavier pour les boutons:</p>" +
     "{accessKeys}" +

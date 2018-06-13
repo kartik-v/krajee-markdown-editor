@@ -1,13 +1,12 @@
 /*!
- * LANG translations for krajee-markdown-editor. 
+ * LANG Translations for krajee-markdown-editor
  *
  * This file must be loaded after 'markdown-editor.js'. Patterns in braces '{}', or
  * any HTML markup tags in the messages must not be converted or translated.
- *
+ * 
  * @see http://plugins.krajee.com/markdown-editor
  *
- * Author: Kartik Visweswaran
- * Copyright: 2014 - 2017, Kartik Visweswaran, Krajee.com
+ * NOTE: this file must be saved in UTF-8 encoding.
  */
 $.fn.markdownEditorLocales["LANG"] = {
     noDataMsg: "No valid source data found!",
@@ -71,20 +70,20 @@ $.fn.markdownEditorLocales["LANG"] = {
         }
     },
     buttonActions: {
-        bold: {default: "**(bold text here)**"},
-        italic: {default: "_(italic text here)_"},
-        ins: {default: "_(inserted text here)_"},
-        del: {default: "_(strikethrough text here)_"},
-        mark: {default: "_(marked text here)_"},
-        sup: {default: "_(superscript text here)_"},
-        sub: {default: "_(subscript text here)_"},
-        paragraph: {default: "\n(paragraph text here)\n"},
-        heading1: {default: "# (heading 1 text here)"},
-        heading2: {default: "## (heading 2 text here)"},
-        heading3: {default: "### (heading 3 text here)"},
-        heading4: {default: "#### (heading 4 text here)"},
-        heading5: {default: "##### (heading 5 text here)"},
-        heading6: {default: "###### (heading 6 text here)"}
+        bold: {markup: "**(bold text here)**"},
+        italic: {markup: "_(italic text here)_"},
+        ins: {markup: "_(inserted text here)_"},
+        del: {markup: "_(strikethrough text here)_"},
+        mark: {markup: "_(marked text here)_"},
+        sup: {markup: "_(superscript text here)_"},
+        sub: {markup: "_(subscript text here)_"},
+        paragraph: {markup: "\n(paragraph text here)\n"},
+        heading1: {markup: "# (heading 1 text here)"},
+        heading2: {markup: "## (heading 2 text here)"},
+        heading3: {markup: "### (heading 3 text here)"},
+        heading4: {markup: "#### (heading 4 text here)"},
+        heading5: {markup: "##### (heading 5 text here)"},
+        heading6: {markup: "###### (heading 6 text here)"}
     },
     hintText: "<ul><li><p>You may follow the <a href='http://spec.commonmark.org/' target='_blank'>" +
         "CommonMark spec</a> and " + "<a href='https://github.com/markdown-it/markdown-it'>markdown-it</a> " +
