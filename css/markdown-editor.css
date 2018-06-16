@@ -31,26 +31,27 @@
     resize: none;
 }
 
-.md-editor .md-header,.md-editor .md-footer {
-    display: block;
-    background: #fefefe;
-}
-
-.md-editor .md-header {
-    padding: 2px 2px 0;
-}
-
+.md-editor .md-header,
 .md-editor .md-footer {
-    padding: 0 2px 2px;
+    background: #fefefe;
+    padding: 0 2px;
+}
+
+.md-editor .md-header  {
+    border-radius: 4px 4px 0 0;
+}
+
+.md-editor .md-footer  {
+    border-radius: 0 0 4px 4px;
 }
 
 .md-btn-group {
-    margin: 2px;
+    margin: 1px;
     padding: 0;
 }
 
 .md-btn-group .btn {
-    padding: 3px 6px;
+    padding: 2px 5px;
 }
 
 .md-btn-heading1 {
@@ -104,8 +105,8 @@
 .md-editor .md-input:focus, .md-editor .md-preview:focus {
     outline: 0;
     box-shadow: none;
-    border-top-color: #aaa;
-    border-bottom-color: #aaa;
+    border-top-color: #dfdfdf;
+    border-bottom-color: #dfdfdf;
 }
 
 .md-editor .md-btn-preview .md-editor-label,
@@ -209,7 +210,7 @@
 
 .md-zero-pad {
     padding: 0;
-    border-radius: 4px;
+    border-radius: 0;
 }
 
 .md-zero-pad .alert {
@@ -378,7 +379,7 @@
 }
 
 .md-preview-mode-title {
-    font-size: 22px;
+    font-size: 18px;
     font-weight: bold;
     color: #ccc;
     padding: 4px 8px 0;
@@ -387,6 +388,12 @@
 /**
  * Mandatory settings (applicable for all themes)
  */
+.md-preview-cell, .md-input-cell {
+    padding: 0;
+    margin: 0;
+    border: 0;
+}
+
 .md-split-mode .md-input-cell {
     width: 50%;
 }
@@ -399,9 +406,8 @@
     width: 0;
 }
 
-.md-only-preview .md-btn:not(.md-btn-special),
-.md-only-preview .md-btn-other, .md-preview-mode-title,
-.md-editor-mode .md-preview, .md-preview-mode .md-input {
+.md-only-preview .md-btn-group:not(.md-always-visible),
+.md-preview-mode-title, .md-editor-mode .md-preview, .md-preview-mode .md-input {
     display: none;
 }
 

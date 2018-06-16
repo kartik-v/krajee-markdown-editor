@@ -11,78 +11,89 @@
  * https://github.com/kartik-v/krajee-markdown-editor/blob/master/LICENSE.md
  */
 //colors
-$alto: #ddd !default;
-$apple-blossom: #a94442 !default;
-$black-7-5: rgba(0, 0, 0, .075) !default;
-$black: #000 !default;
-$celeste: #ccc !default;
-$cornflower-blue-60: rgba(102, 175, 233, 0.6) !default;
-$cornflower-blue: #66afe9 !default;
-$fern: #67b168 !default;
-$fuscous-gray: #555 !default;
-$killarney: #3c763d !default;
-$lotus: #843534 !default;
-$lunar-green: #2b542c !default;
-$mountain-mist: #999 !default;
-$new-york-pink: #ce8483 !default;
-$oyster-pink: #ebccd1 !default;
-$regent-st-blue: #afd9ee !default;
-$romance: #fefefe !default;
-$silver-chalice: #aaa !default;
 $white: #fff !default;
-$wild-sand: #f5f5f5 !default;
+$color_alto: #ddd !default;
+$color_romance: #fefefe !default;
+$color_celeste: #ccc !default;
+$color_wild_sand: #f5f5f5 !default;
+$color_bon_jour: #dfdfdf !default;
+$black_7_5: rgba(0, 0, 0, .075) !default;
+$color_cornflower_blue_60: rgba(102, 175, 233, 0.6) !default;
+$color_cornflower_blue: #66afe9 !default;
+$color_apple_blossom: #a94442 !default;
+$color_lotus: #843534 !default;
+$color_new_york_pink: #ce8483 !default;
+$color_killarney: #3c763d !default;
+$color_lunar_green: #2b542c !default;
+$color_fern: #67b168 !default;
+$color_oyster_pink: #ebccd1 !default;
+$color_mountain_mist: #999 !default;
+$color_fuscous_gray: #555 !default;
+$color_regent_st_blue: #afd9ee !default;
+$black: #000 !default;
 
 //fonts
-$font-0: Monaco !default;
-$font-1: Menlo !default;
-$font-2: Consolas !default;
-$font-3: "Courier New" !default;
-$font-4: monospace !default;
+$font_0: Monaco !default;
+$font_1: Menlo !default;
+$font_2: Consolas !default;
+$font_3: Courier New !default;
+$font_4: monospace !default;
 
 //urls
-$url-0: url(../img/loading.gif) !default;
+$url_0: url(../img/loading.gif) !default;
 
 //@extend-elements
-%set-focus {
+%set_blur {
     outline: 0;
     box-shadow: none;
-    border-top-color: $silver-chalice;
-    border-bottom-color: $silver-chalice;
+    border-top-color: $color_bon_jour;
+    border-bottom-color: $color_bon_jour;
 }
 
-%set-active {
+%set_focus {
     outline: 0;
-    box-shadow: inset 0 1px 1px $black-7-5, 0 0 8px $cornflower-blue-60;
-    border-color: $cornflower-blue;
+    box-shadow: inset 0 1px 1px $black_7_5, 0 0 8px $color_cornflower_blue_60;
+    border-color: $color_cornflower_blue;
 }
 
-%set-transition {
+%set_md_cell {
+    padding: 0;
+    margin: 0;
+    border: 0;
     transition: all .5s ease;
 }
 
 .md-container {
     background: $white;
-    @extend %set-transition;
+    transition: all .5s ease;
 }
 
-.md-input-cell, .md-preview-cell {
-    @extend %set-transition;
+.md-input-cell {
+    @extend %set_md_cell;
+}
+
+.md-preview-cell {
+    @extend %set_md_cell;
 }
 
 .md-editor {
     display: block;
-    border: 1px solid $alto;
+    border: 1px solid $color_alto;
     border-radius: 4px;
     .md-header {
-        padding: 2px 2px 0;
+        background: $color_romance;
+        padding: 0 2px;
+        border-radius: 4px 4px 0 0;
     }
     .md-footer {
-        padding: 0 2px 2px;
+        background: $color_romance;
+        padding: 0 2px;
+        border-radius: 0 0 4px 4px;
     }
     .md-preview {
         background: $white;
         &:focus {
-            @extend %set-focus;
+            @extend %set_blur;
         }
     }
     .md-btn-preview {
@@ -102,22 +113,19 @@ $url-0: url(../img/loading.gif) !default;
         }
     }
     &:focus {
-        @extend %set-active;
+        @extend %set_focus;
     }
     &.active {
-        @extend %set-active;
-    }
-    .btn-toolbar > .btn-group {
-        margin: 2px;
+        @extend %set_focus;
     }
     .md-input:focus {
-        @extend %set-focus;
+        @extend %set_blur;
     }
     > .md-preview {
         position: relative;
         background: $white;
-        border-top: 1px dashed $alto;
-        border-bottom: 1px dashed $alto;
+        border-top: 1px dashed $color_alto;
+        border-bottom: 1px dashed $color_alto;
         min-height: 10px;
         overflow: auto;
         padding: 8px;
@@ -126,26 +134,26 @@ $url-0: url(../img/loading.gif) !default;
 
 .md-input {
     resize: none;
-    font-family: $font-0, $font-1, $font-2, $font-3, $font-4;
+    font-family: $font_0, $font_1, $font_2, $font_3, $font_4;
     font-size: 14px;
     display: block;
     line-height: 20px;
     width: 100%;
     border: 0;
-    border-top: 1px solid $celeste;
-    border-bottom: 1px solid $celeste;
+    border-top: 1px solid $color_celeste;
+    border-bottom: 1px solid $color_celeste;
     border-radius: 0;
-    background: $wild-sand;
+    background: $color_wild_sand;
     box-shadow: none;
     margin: 0;
     padding: 8px;
 }
 
 .md-btn-group {
-    margin: 2px;
+    margin: 1px;
     padding: 0;
     .btn {
-        padding: 3px 6px;
+        padding: 2px 5px;
     }
 }
 
@@ -188,14 +196,6 @@ $url-0: url(../img/loading.gif) !default;
     }
 }
 
-.md-min-icon {
-    display: none;
-}
-
-.md-max-icon {
-    display: inline;
-}
-
 .md-fullscreen-overlay {
     position: fixed;
     top: 0;
@@ -223,6 +223,14 @@ $url-0: url(../img/loading.gif) !default;
     }
 }
 
+.md-min-icon {
+    display: none;
+}
+
+.md-max-icon {
+    display: inline;
+}
+
 .md-preview-message {
     position: absolute;
     height: 80px;
@@ -240,9 +248,9 @@ $url-0: url(../img/loading.gif) !default;
 
 .md-zero-pad {
     padding: 0;
-    border-radius: 4px;
+    border-radius: 0;
     .alert {
-        border-color: $oyster-pink;
+        border-color: $color_oyster_pink;
         border-radius: 4px;
     }
 }
@@ -254,7 +262,7 @@ $url-0: url(../img/loading.gif) !default;
     right: 0;
     bottom: 0;
     margin: auto;
-    background: $url-0 no-repeat center bottom;
+    background: $url_0 no-repeat center bottom;
     cursor: wait;
     opacity: 0.4;
     height: 50px;
@@ -264,16 +272,16 @@ $url-0: url(../img/loading.gif) !default;
 
 .md-hint {
     font-size: .85em;
-    color: $mountain-mist;
+    color: $color_mountain_mist;
     &:hover {
-        color: $fuscous-gray;
+        color: $color_fuscous_gray;
     }
 }
 
 .md-codeblock {
     padding: 5px 8px;
-    background-color: $wild-sand;
-    border: 1px solid $alto;
+    background-color: $color_wild_sand;
+    border: 1px solid $color_alto;
     border-radius: 0;
 }
 
@@ -293,10 +301,10 @@ $url-0: url(../img/loading.gif) !default;
         height: 100px;
         padding: 10px;
         text-align: center;
-        background-color: $wild-sand;
+        background-color: $color_wild_sand;
         border: 1px solid $white;
         &:hover {
-            background-color: $regent-st-blue;
+            background-color: $color_regent_st_blue;
         }
     }
 }
@@ -327,10 +335,10 @@ $url-0: url(../img/loading.gif) !default;
         width: 40px;
         height: 40px;
         text-align: center;
-        background-color: $wild-sand;
+        background-color: $color_wild_sand;
         border: 1px solid $white;
         &:hover {
-            background-color: $regent-st-blue;
+            background-color: $color_regent_st_blue;
         }
     }
 }
@@ -379,8 +387,8 @@ $url-0: url(../img/loading.gif) !default;
     border: none;
     .md-preview {
         position: relative;
-        border-top: 1px solid $celeste;
-        border-bottom: 1px solid $celeste;
+        border-top: 1px solid $color_celeste;
+        border-bottom: 1px solid $color_celeste;
         border-right: 0;
         padding: 8px;
         overflow-y: auto;
@@ -388,9 +396,9 @@ $url-0: url(../img/loading.gif) !default;
 }
 
 .md-preview-mode-title {
-    font-size: 22px;
+    font-size: 18px;
     font-weight: bold;
-    color: $celeste;
+    color: $color_celeste;
     padding: 4px 8px 0;
     display: none;
 }
@@ -425,47 +433,42 @@ $url-0: url(../img/loading.gif) !default;
     }
 }
 
-.md-split-mode {
-    .md-input-cell {
-        width: 50%;
-    }
-}
-
 .md-only-preview {
-    .md-btn-other {
-        display: none;
-    }
     .md-preview-mode-title {
         display: block;
     }
-    .md-btn:not(.md-btn-special) {
+    .md-btn-group:not(.md-always-visible) {
         display: none;
     }
 }
 
+.md-dialog-title {
+    margin-top: 10px;
+}
+
 .has-error .md-editor {
-    border-color: $apple-blossom;
-    box-shadow: inset 0 1px 1px $black-7-5;
+    border-color: $color_apple_blossom;
+    box-shadow: inset 0 1px 1px $black_7_5;
     &:focus {
-        border-color: $lotus;
-        box-shadow: inset 0 1px 1px $black-7-5, 0 0 6px $new-york-pink;
+        border-color: $color_lotus;
+        box-shadow: inset 0 1px 1px $black_7_5, 0 0 6px $color_new_york_pink;
     }
     &.active {
-        border-color: $lotus;
-        box-shadow: inset 0 1px 1px $black-7-5, 0 0 6px $new-york-pink;
+        border-color: $color_lotus;
+        box-shadow: inset 0 1px 1px $black_7_5, 0 0 6px $color_new_york_pink;
     }
 }
 
 .has-success .md-editor {
-    border-color: $killarney;
-    box-shadow: inset 0 1px 1px $black-7-5;
+    border-color: $color_killarney;
+    box-shadow: inset 0 1px 1px $black_7_5;
     &:focus {
-        border-color: $lunar-green;
-        box-shadow: inset 0 1px 1px $black-7-5, 0 0 6px $fern;
+        border-color: $color_lunar_green;
+        box-shadow: inset 0 1px 1px $black_7_5, 0 0 6px $color_fern;
     }
     .active {
-        border-color: $lunar-green;
-        box-shadow: inset 0 1px 1px $black-7-5, 0 0 6px $fern;
+        border-color: $color_lunar_green;
+        box-shadow: inset 0 1px 1px $black_7_5, 0 0 6px $color_fern;
     }
 }
 
@@ -477,6 +480,6 @@ $url-0: url(../img/loading.gif) !default;
     padding-left: 15px;
 }
 
-.md-dialog-title {
-    margin-top: 10px;
+.md-split-mode .md-input-cell {
+    width: 50%;
 }

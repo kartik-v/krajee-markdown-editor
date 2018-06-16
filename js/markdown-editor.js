@@ -12,17 +12,17 @@
  */
 (function (factory) {
     "use strict";
-    if (typeof define === 'function' && define.amd) { // jshint ignore:line
-        // AMD. Register as an anonymous module.
-        define(['jquery'], factory); // jshint ignore:line
-    } else { // noinspection JSUnresolvedVariable
-        if (typeof module === 'object' && module.exports) { // jshint ignore:line
-            // Node/CommonJS
-            // noinspection JSUnresolvedVariable
-            module.exports = factory(require('jquery')); // jshint ignore:line
+    // noinspection JSUnresolvedVariable
+    if (typeof define === 'function' && define.amd) {
+        // noinspection JSUnresolvedFunction
+        define(['jquery'], factory); // AMD. Register as an anonymous module.
+    } else {
+        // noinspection JSUnresolvedVariable
+        if (typeof module === 'object' && module.exports) {
+            // noinspection JSUnresolvedVariable, JSUnresolvedFunction
+            module.exports = factory(require('jquery')); // Node/CommonJS
         } else {
-            // Browser globals
-            factory(window.jQuery);
+            factory(window.jQuery); // Browser globals
         }
     }
 }(function ($) {
@@ -39,13 +39,13 @@
     $h = {
         CREDITS: '<a class="text-info" href="http://plugins.krajee.com/markdown-editor">krajee-markdown-editor</a>',
         CREDITS_MD: '[krajee-markdown-editor](http://plugins.krajee.com/markdown-editor)',
+        BS4_VER: '4.2.1',
+        BS3_VER: '3.3.7',
         DEFAULT_TIMEOUT: 250,
         EMPTY: '',
         NAMESPACE: '.markdownEditor',
         LINK_CM: '<a href="http://spec.commonmark.org/" target="_blank">CommonMark</a>',
         LINK_MI: '<a href="https://markdown-it.github.io/markdown-it/" target="_blank">markdown-it</a>',
-        BS3_VER: '3.3.7',
-        BS4_VER: '4.1.1',
         htmlEncode: function (str) {
             return str === undefined ? '' : str.replace(/&/g, '&amp;')
                 .replace(/</g, '&lt;')
@@ -123,6 +123,7 @@
                     scrollPre = document.createElement('pre');
                     input.parentNode.appendChild(scrollPre);
                     style = window.getComputedStyle(input, '');
+                    // noinspection JSValidateTypes
                     scrollPre.style = {
                         visibility: 'hidden',
                         lineHeight: style.lineHeight,
@@ -143,10 +144,13 @@
                     scrollPre.parentNode.removeChild(scrollPre);
                 }
             } else {
+                // noinspection JSUnresolvedVariable
                 if (input.createTextRange) {
                     var range = input.createTextRange();
                     range.collapse(true);
+                    // noinspection JSUnresolvedFunction
                     range.moveEnd('character', selectionEnd);
+                    // noinspection JSUnresolvedFunction
                     range.moveStart('character', selectionStart);
                     range.select();
                 }
@@ -198,38 +202,38 @@
     };
 
     /**
-     * Default settings for buttons and export
+     * Default configurations for templates, icons, buttons, and export
      */
     $defaults = {
         templates: {
             main: '<div class="md-editor" tabindex="0">\n' +
-            '  {header}\n' +
+            '  {HEADER}\n' +
             '  <table class="md-input-preview">\n' +
             '    <tr>\n' +
-            '      <td class="md-input-cell">{input}</td>\n' +
-            '      <td class="md-preview-cell">{preview}</td>\n' +
+            '      <td class="md-input-cell">{INPUT}</td>\n' +
+            '      <td class="md-preview-cell">{PREVIEW}</td>\n' +
             '    </tr>' +
             '  </table>\n' +
-            '  {footer}\n' +
-            '  {dialog}\n' +
+            '  {FOOTER}\n' +
+            '  {DIALOG}\n' +
             '</div>',
             header: '<div class="md-header">\n' +
-            '  <div class="md-toolbar-header-r btn-toolbar pull-right float-right">\n' +
-            '    {toolbarHeaderR}\n' +
+            '  <div class="md-toolbar-header-r pull-right float-right">\n' +
+            '    {TOOLBAR_HEADER_R}\n' +
             '  </div>\n' +
-            '  <div class="md-toolbar-header-l btn-toolbar">\n' +
-            '    {toolbarHeaderL}\n' +
+            '  <div class="md-toolbar-header-l">\n' +
+            '    {TOOLBAR_HEADER_L}\n' +
             '  </div>\n' +
             '  <div class="clearfix">\n' +
             '  </div>\n' +
             '</div>',
             preview: '<div class="md-preview" tabindex="0">\n</div>',
             footer: '<div class="md-footer">\n' +
-            '  <div class="md-toolbar-footer-r btn-toolbar pull-right float-right">\n' +
-            '    {toolbarFooterR}\n' +
+            '  <div class="md-toolbar-footer-r pull-right float-right">\n' +
+            '    {TOOLBAR_FOOTER_R}\n' +
             '  </div>\n' +
-            '  <div class="md-toolbar-footer-l btn-toolbar">\n' +
-            '    {toolbarFooterL}\n' +
+            '  <div class="md-toolbar-footer-l">\n' +
+            '    {TOOLBAR_FOOTER_L}\n' +
             '  </div>\n' +
             '  <div class="clearfix">\n' +
             '  </div>\n' +
@@ -238,7 +242,7 @@
             '  <div class="modal-dialog">\n' +
             '    <div class="modal-content">\n' +
             '      <div class="modal-header">\n' +
-            '         {header}\n' +
+            '         {HEADER}\n' +
             '      </div>\n' +
             '      <div class="modal-body">\n' +
             '        <input class="md-dialog-input form-control">\n' +
@@ -247,10 +251,10 @@
             '      </div>\n' +
             '      <div class="modal-footer">\n' +
             '        <button type="button" class="md-dialog-cancel btn btn-default btn-outline-secondary" data-dismiss="modal">\n' +
-            '          {dialogCancelIcon} {dialogCancelText}\n' +
+            '          {DIALOG_CANCEL_ICON} {DIALOG_CANCEL_TEXT}\n' +
             '        </button>\n' +
             '        <button type="button" class="md-dialog-submit btn btn-primary" data-dismiss="modal">\n' +
-            '          {dialogSubmitIcon} {dialogSubmitText}\n' +
+            '          {DIALOG_SUBMIT_ICON} {DIALOG_SUBMIT_TEXT}\n' +
             '        </button>\n' +
             '      </div>\n' +
             '    </div>\n' +
@@ -258,66 +262,66 @@
             dialogClose: '<button type="button" class="close" data-dismiss="modal" aria-label="Close">\n' +
             '  <span aria-hidden="true">&times;</span>\n' +
             '</button>\n',
+            htmlMeta: '<!DOCTYPE html>\n' +
+            '  <meta http-equiv="Content-Type" content="text/html,charset=UTF-8"/>\n' +
+            '  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>\n',
+            exportCssJs: '{EXPORT_PREPEND_CSS_JS}\n' +
+            '<style>\n' +
+            '  body{margin:20px;padding:20px;border:1px solid #ddd;border-radius:5px;}\n' +
+            '</style>',
             exportHeader: '> - - -\n' +
             '> Markdown Export\n' +
             '> ==============\n' +
             '> *Generated {today} by {credits}*\n' +
             '> - - -\n\n',
-            htmlMeta: '<!DOCTYPE html>\n' +
-            '  <meta http-equiv="Content-Type" content="text/html,charset=UTF-8"/>\n' +
-            '  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>\n',
-            exportCssJs: '{exportPrependCssJs}\n' +
-            '<style>\n' +
-            '  body{margin:20px;padding:20px;border:1px solid #ddd;border-radius:5px;}\n' +
-            '</style>',
             hint: '<ul>\n' +
             '  <li><p>You may follow the {LINK_CM} specification (generated via {LINK_MI} plugin) for writing your markdown text.</p></li>\n' +
             '  <li><p>In order to use the formatting buttons on the toolbar, you generally need to highlight a text ' +
             '  within the editor on which the formatting is to be applied. You can also undo the format action on the ' +
             '  highlighted text by clicking the button again (for most buttons).</p></li>\n' +
             '  <li><p>Keyboard access shortcuts for buttons:</p>' +
-            '    {accessKeys}' +
+            '    {ACCESS_KEYS}' +
             '  </li>\n' +
             '</ul>'
         },
         icons: {
-            undo: 'undo',
-            redo: 'redo',
-            bold: 'bold',
-            italic: 'italic',
-            ins: 'underline',
-            del: 'strikethrough',
-            sup: 'superscript',
-            sub: 'subscript',
-            mark: 'eraser',
-            paragraph: 'paragraph',
-            newline: 'text-height',
-            heading: 'heading',
-            link: 'link',
-            image: 'image',
-            indent: 'indent',
-            outdent: 'outdent',
-            ul: 'list-ul',
-            ol: 'list-ol',
-            dl: 'th-list',
-            footnote: 'sticky-note',
-            blockquote: 'quote-right',
-            code: 'code',
-            codeblock: 'file-code',
-            hr: 'minus',
-            emoji: 'smile',
-            fullscreen: 'arrows-alt',
-            minscreen: 'compress',
-            hint: 'lightbulb',
-            modePreview: 'search',
-            modeEditor: 'edit',
-            modeSplit: 'arrows-alt-h',
-            'export': 'download',
-            exportHtml: 'file-alt',
-            exportText: 'file',
-            alertMsg: 'exclamation-circle',
-            dialogCancel: 'times',
-            dialogSubmit: 'check'
+            undo: '<span class="fas fa-fw fa-undo"></span>',
+            redo: '<span class="fas fa-fw fa-redo"></span>',
+            bold: '<span class="fas fa-fw fa-bold"></span>',
+            italic: '<span class="fas fa-fw fa-italic"></span>',
+            ins: '<span class="fas fa-fw fa-underline"></span>',
+            del: '<span class="fas fa-fw fa-strikethrough"></span>',
+            sup: '<span class="fas fa-fw fa-superscript"></span>',
+            sub: '<span class="fas fa-fw fa-subscript"></span>',
+            mark: '<span class="fas fa-fw fa-eraser"></span>',
+            paragraph: '<span class="fas fa-fw fa-paragraph"></span>',
+            newline: '<span class="fas fa-fw fa-text-height"></span>',
+            heading: '<span class="fas fa-fw fa-heading"></span>',
+            link: '<span class="fas fa-fw fa-link"></span>',
+            image: '<span class="far fa-fw fa-image"></span>',
+            indent: '<span class="fas fa-fw fa-indent"></span>',
+            outdent: '<span class="fas fa-fw fa-outdent"></span>',
+            ul: '<span class="fas fa-fw fa-list-ul"></span>',
+            ol: '<span class="fas fa-fw fa-list-ol"></span>',
+            dl: '<span class="fas fa-fw fa-th-list"></span>',
+            footnote: '<span class="far fa-fw fa-sticky-note"></span>',
+            blockquote: '<span class="fas fa-fw fa-quote-right"></span>',
+            code: '<span class="fas fa-fw fa-code"></span>',
+            codeblock: '<span class="far fa-fw fa-file-code"></span>',
+            hr: '<span class="fas fa-fw fa-minus"></span>',
+            emoji: '<span class="far fa-fw fa-smile"></span>',
+            fullscreen: '<span class="fas fa-fw fa-arrows-alt"></span>',
+            minscreen: '<span class="fas fa-fw fa-compress"></span>',
+            hint: '<span class="fas fa-fw fa-lightbulb"></span>',
+            modePreview: '<span class="fas fa-fw fa-search"></span>',
+            modeEditor: '<span class="fas fa-fw fa-edit"></span>',
+            modeSplit: '<span class="fas fa-fw fa-arrows-alt-h"></span>',
+            export: '<span class="fas fa-fw fa-download"></span>',
+            exportHtml: '<span class="fas fa-fw fa-file-alt"></span>',
+            exportText: '<span class="fas fa-fw fa-file"></span>',
+            alertMsg: '<span class="fas fa-fw fa-exclamation-circle"></span>',
+            dialogCancel: '<span class="fas fa-fw fa-times"></span>',
+            dialogSubmit: '<span class="fas fa-fw fa-check"></span>'
         },
         buttonAccessKeys: {
             undo: 'z',
@@ -389,12 +393,18 @@
             modeEditor: 'Editor mode',
             modePreview: 'Preview mode',
             modeSplit: 'Split mode',
-            'export': 'Export content',
+            export: 'Export content',
             exportHtml: 'Export as HTML',
             exportText: 'Export as Text'
         },
+        buttonCss: {
+            hint: 'btn btn-info'
+        },
+        dropdownCss: {
+            emoji: 'md-emojies-list pull-right float-right'
+        },
         buttonLabels: {
-            'export': 'Export',
+            export: 'Export',
             exportHtml: 'HTML',
             exportText: 'Text'
         },
@@ -402,12 +412,12 @@
             link: {
                 header: 'Insert Hyperlink',
                 hintInput: 'Enter hyperlink address...',
-                hintTitle: 'Enter text for the link...',
+                hintTitle: 'Enter text for the link...'
             },
             image: {
                 header: 'Insert Image Link',
                 hintInput: 'Enter image link address...',
-                hintTitle: 'Enter alternate text for the image...',
+                hintTitle: 'Enter alternate text for the image...'
             },
             ol: {
                 header: 'Ordered List Starting Number',
@@ -467,7 +477,7 @@
                 return function (link, title) {
                     if (!$h.isEmpty(link)) {
                         if (link.substring(0, 6) !== 'ftp://' && link.substring(0,
-                                7) !== 'http://' && link.substring(0, 8) !== 'https://') {
+                            7) !== 'http://' && link.substring(0, 8) !== 'https://') {
                             link = 'http://' + link;
                         }
                         str = '[' + title + '](' + link + ')';
@@ -479,7 +489,7 @@
                 return function (link, title) {
                     if (!$h.isEmpty(link)) {
                         if (link.substring(0, 6) !== 'ftp://' && link.substring(0,
-                                7) !== 'http://' && link.substring(0, 8) !== 'https://') {
+                            7) !== 'http://' && link.substring(0, 8) !== 'https://') {
                             link = 'http://' + link;
                         }
                         str = '![' + title + '](' + link + ')';
@@ -659,15 +669,17 @@
             self.isBs4 = String(self.bsVersion).substring(0, 1) === '4';
             if (self.exportPrependCssJs === undefined) {
                 self.exportPrependCssJs = '<link href="https://maxcdn.bootstrapcdn.com/bootstrap/' +
-                    (self.isBs4 ? '4.1.1' : '3.3.7') + '/css/bootstrap.min.css" rel="stylesheet">';
+                    (self.isBs4 ? $h.BS4_VER : $h.BS3_VER) + '/css/bootstrap.min.css" rel="stylesheet">';
             }
-            $el.attr('rows', self.rows);
             self.setDefaults('icons');
             self.setDefaults('buttonTitles');
             self.setDefaults('buttonLabels');
             self.setDefaults('buttonPrompts');
             self.setDefaults('buttonAccessKeys');
             self.setDefaults('buttonActions');
+            self.setDefaults('buttonCss');
+            self.setDefaults('buttonGroupCss');
+            self.setDefaults('dropdownCss');
             self.setDefaults('exportConfig');
             self.setDefaults('templates');
             self.defaultInputHeight = $el.height();
@@ -684,7 +696,7 @@
                     md.renderer.rules.emoji = function (token, idx) {
                         //noinspection JSUnresolvedVariable
                         return self.useTwemoji && window.twemoji ? window.twemoji.parse(token[idx].content) :
-                            '<span class="md-emoji">' + token[idx].content + '</span>';
+                            '<span class="md-emoji">' + token[idx].markup + '</span>';
                     };
                     md.renderer.rules.paragraph_open = md.renderer.rules.heading_open =
                         function (tokens, idx, options, env, slf) {
@@ -711,18 +723,22 @@
             self.reset();
             self.listen();
         },
-        setDefaults: function(param) {
+        setDefaults: function (param) {
             var self = this;
             if (typeof self[param] !== "function") {
-                self[param] = $.extend(true, {}, $defaults[param], self[param]);
+                self[param] = $.extend(true, {}, $defaults[param] || {}, self[param]);
             }
         },
-        getConfig: function(prop, key) {
-            var self = this, config = self[prop];
-            if (config === undefined) {
+        getConfig: function (prop, key) {
+            var self = this, cfg = self[prop], t = self.theme && $.fn.markdownEditorThemes[self.theme] || {}, tCfg;
+            if (cfg === undefined) {
                 return null;
             }
-            return typeof config === "function" ? config(key) : config[key]
+            tCfg = t[prop];
+            if (typeof tCfg === "function") {
+                return tCfg(key);
+            }
+            return typeof cfg === "function" ? cfg(key) : cfg[key]
         },
         handleEvent: function ($element, event, method) {
             var self = this, ev = event + $h.NAMESPACE;
@@ -921,7 +937,7 @@
         keydownDialog: function (event) {
             var self = this;
             $h.handler(event, function () {
-                var $targ = $(event.target), isInput = $targ.hasClass('md-dialog-input'), 
+                var $targ = $(event.target), isInput = $targ.hasClass('md-dialog-input'),
                     isTitle = $targ.hasClass('md-dialog-title');
                 if (event.keyCode === 13 && (isInput || isTitle)) {
                     event.stopPropagation();
@@ -1107,38 +1123,41 @@
             $h.setSelectionRange(el, fm, newPos);
         },
         destroy: function () {
-            var self = this, $el = self.$element, $cont = self.$container, css = self.inputCss;
-            $el.insertBefore($cont).off($h.NAMESPACE);
-            $(window).off($h.NAMESPACE);
+            var self = this, $el = self.$element, $cont = self.$container, css = self.inputCss, ns = $h.NAMESPACE;
             if (css) {
                 $el.removeClass(css).show();
             }
-            $cont.remove();
+            $el.off(ns);
+            $(window).off(ns);
+            $cont.before($el).remove();
         },
         getLayout: function (template) {
             var self = this, header, title, btnClose, out = self.getConfig('templates', template) || $h.EMPTY, tag;
-            if (template === 'dialog')  {
+            if (template === 'dialog') {
                 tag = self.isBs4 ? 'h5' : 'h4';
                 title = '<' + tag + ' class="md-dialog-head-title modal-title"></' + tag + '>';
                 btnClose = self.getConfig('templates', 'dialogClose');
                 header = self.isBs4 ? title + '\n' + btnClose : btnClose + '\n' + title;
-                out = out.replace('{header}', header)
-                    .replace('{dialogCancelIcon}', self.renderIcon('dialogCancel'))
-                    .replace('{dialogSubmitIcon}', self.renderIcon('dialogSubmit'))
-                    .replace('{dialogCancelText}', self.dialogCancelText)
-                    .replace('{dialogSubmitText}', self.dialogSubmitText);
+                out = out.replace('{HEADER}', header)
+                    .replace('{DIALOG_CANCEL_ICON}', self.renderIcon('dialogCancel'))
+                    .replace('{DIALOG_SUBMIT_ICON}', self.renderIcon('dialogSubmit'))
+                    .replace('{DIALOG_CANCEL_TEXT}', self.dialogCancelText)
+                    .replace('{DIALOG_SUBMIT_TEXT}', self.dialogSubmitText);
             }
             return out;
         },
         submitExportForm: function (extension, content) {
-            var self = this, $form = $h.create('form'), $filetype, $filename, $content, 
+            var self = this, $form = $h.create('form'), $filetype, $filename, $content,
                 ifrm = self.$element.attr('id') + '-iframe', addlInputs = self.exportAddlData;
             if (!$('#' + ifrm).length) {
                 $h.create('iframe', {id: ifrm, name: ifrm, css: {display: 'none'}}).appendTo('body');
             }
             $filetype = $h.create('input', {type: 'hidden', name: 'export_type', value: extension});
             $filename = $h.create('input', {type: 'hidden', name: 'export_filename', value: self.exportFileName});
-            $content = $h.create('input', {name: 'export_content', css: {display: 'none'}}).val(content || self.noDataMsg);
+            $content = $h.create('input', {
+                name: 'export_content',
+                css: {display: 'none'}
+            }).val(content || self.noDataMsg);
             $form.attr({target: ifrm, action: self.exportUrl, method: self.exportMethod});
             $form.append($filetype, $filename, $content);
             if (addlInputs) {
@@ -1167,9 +1186,9 @@
             });
         },
         showDialog: function (key, callback, str) {
-            var self = this, prompts = self.getConfig('buttonPrompts', key), hdr = (prompts.header || $h.EMPTY), str,
+            var self = this, prompts = self.getConfig('buttonPrompts', key), hdr = (prompts.header || $h.EMPTY),
                 icon = self.renderIcon(key), p1 = prompts.hintInput || $h.EMPTY, p2 = prompts.hintTitle,
-                ev = $events.modalShown;
+                evShow = $events.modalShown, evClick = $events.click;
             self.$dialogMain.removeClass('modal-lg');
             self.$dialogHeadTitle.html(icon ? icon + ' ' + hdr : hdr);
             self.$dialogContent.hide();
@@ -1181,16 +1200,16 @@
             if (p2 && !str) {
                 self.$dialogTitle.show().attr('placeholder', p2);
             }
-            self.$dialogSubmit.off($events.click).on($events.click, function () {
-                str = callback(self.$dialogInput.val(), self.$dialogTitle.val());
-                if (!$h.isEmpty(str)) {
-                    self.replaceSelected(str);
+            self.$dialogSubmit.off(evClick).on(evClick, function () {
+                var s = callback(self.$dialogInput.val(), self.$dialogTitle.val());
+                if (!$h.isEmpty(s)) {
+                    self.replaceSelected(s);
                 }
             });
             self.$dialog.modal('show');
-            self.$dialog.off(ev).on(ev, function () {
+            self.$dialog.off(evShow).on(evShow, function () {
                 self.$dialogInput.focus();
-                self.$dialog.off(ev);
+                self.$dialog.off(evShow);
             });
         },
         raise: function (event, params, $el) {
@@ -1239,38 +1258,12 @@
             return data;
         },
         generatePreview: function (val, ignorePreviewUpdate) {
-            var self = this, $el = self.$element, $preview = self.$preview, url = self.parserUrl,
-                parser = self.parserMethod, progress = self.getProgress(self.previewProgressMsg);
+            var self = this, $el = self.$element, $preview = self.$preview, parser = self.parserMethod;
             if (val === undefined) {
                 val = $el.val();
             }
-            if (!$h.isEmpty(url)) {
-                $.ajax({
-                    type: "POST",
-                    url: url,
-                    dataType: "json",
-                    data: {source: val},
-                    beforeSend: function (jQXhr) {
-                        if (self.raise('beforePreview', [jQXhr])) {
-                            $preview.html(progress);
-                        }
-                    },
-                    success: function (data, textStatus, jQXhr) {
-                        var isValid = !$h.isEmpty(data, true);
-                        if (isValid && self.raise('successPreview', [data, textStatus, jQXhr])) {
-                            data = self.parseOutput(data);
-                            $preview.html(data);
-                        }
-                        if (!isValid && self.raise('emptyPreview', [data, textStatus, jQXhr])) {
-                            self.showPreviewMsg(self.emptyPreviewMsg);
-                        }
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        if (self.raise('errorPreview', [jqXHR, textStatus, errorThrown])) {
-                            self.showPreviewMsg(self.errorPreviewMsg);
-                        }
-                    }
-                });
+            if (!$h.isEmpty(self.parserUrl)) {
+                self._ajaxSubmit(val);
                 return null;
             }
             val = typeof parser === "function" ? parser(val) : new parser(val); // jshint ignore:line
@@ -1358,7 +1351,7 @@
         resizeFullScreen: function () {
             var self = this, $cont = self.$container, $el = self.$element, $head = $cont.find('.md-header'),
                 $foot = $cont.find('.md-footer'), h = $(window).height() - $head.outerHeight(true) -
-                    $foot.outerHeight(true) - ($el.outerHeight(true) - $el.height());
+                $foot.outerHeight(true) - ($el.outerHeight(true) - $el.height());
             $el.height(h);
             self.$preview.height(h);
         },
@@ -1390,13 +1383,14 @@
             return $h.EMPTY;
         },
         download: function (key, content) {
-            var self = this, $a, config = self.getConfig('exportConfig', key), ext = config.ext || '', uri = config.uri || '';
+            var self = this, $a, config = self.getConfig('exportConfig', key), ext = config.ext || '',
+                uri = config.uri || '';
             if (!$h.isEmpty(self.exportUrl)) {
                 self.submitExportForm(ext, content);
                 return;
             }
             uri = uri + window.btoa(content);
-            $a = $h.create('a').attr({'href': uri, 'download': self.getFileName(key)}).appendTo('body');
+            $a = $h.create('a', {'href': uri, 'download': self.getFileName(key)}).appendTo('body');
             $a[0].click();
             $a.remove();
         },
@@ -1443,18 +1437,19 @@
         getHtmlContent: function (data) {
             var self = this, preCss = self.exportPrependCssJs;
             return '<html>\n<head>\n' +
-                self.getLayout('htmlMeta') + self.getLayout('exportCssJs').replace('{exportPrependCssJs}', preCss) +
+                self.getLayout('htmlMeta') + self.getLayout('exportCssJs').replace('{EXPORT_PREPEND_CSS_JS}', preCss) +
                 '\n</head>\n<body>\n' + data + '\n</body>\n</html>';
         },
         exportData: function (key) {
             var self = this, source = self.$element.val(), tTxt = self.getTitle('exportText'), out,
-                tHtm = self.getTitle('exportHtml'), noDataMsg = self.noDataMsg, errorMsg = self.exportErrorMsg,
+                tHtm = self.getTitle('exportHtml'), noDataMsg = self.noDataMsg,
                 noUrlMsg = self.noExportUrlMsg, today = self.today || new Date();
             if ($h.isEmpty(source) || self.hasInvalidConfig('parser') || self.hasInvalidConfig('export')) {
                 self.showPopupAlert(key === 'exportText' ? tTxt : tHtm, $h.isEmpty(source) ? noDataMsg : noUrlMsg);
                 return;
             }
-            source = self.getLayout('exportHeader').replace('{today}', today).replace('{credits}', $h.CREDITS_MD) + source;
+            source = self.getLayout('exportHeader').replace('{today}', today)
+                .replace('{credits}', $h.CREDITS_MD) + source;
             if (key !== 'exportHtml') {
                 self.download('exportText', source);
                 return;
@@ -1462,45 +1457,15 @@
             if ($h.isEmpty(self.parserUrl)) {
                 out = $h.parseHtml(self.generatePreview(source, true));
                 self.download('exportHtml', self.getHtmlContent(out));
-                return;
             }
-            $.ajax({
-                type: "POST",
-                url: self.parserUrl,
-                dataType: "json",
-                data: {source: source},
-                beforeSend: function (jQXhr) {
-                    if (self.raise('beforeExportHtm', [jQXhr])) {
-                        self.showPopup(tHtm, self.getProgress(self.exportProgressMsg));
-                    }
-                },
-                success: function (data, textStatus, jQXhr) {
-                    if (self.raise('successExportHtm', [data, textStatus, jQXhr])) {
-                        self.$dialog.modal('hide');
-                        if (data) {
-                            self.download(key, self.getHtmlContent(data));
-                        } else {
-                            self.showPopupAlert(tHtm, errorMsg);
-                        }
-                    }
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    if (self.raise('errorExportHtm', [jqXHR, textStatus, errorThrown])) {
-                        self.showPopupAlert(tHtm, errorMsg);
-                    }
-                }
-            });
         },
         renderIcon: function (key) {
-            var self = this, icon = self.getConfig('icons', key) || $h.EMPTY;
-            if (icon) {
-                return '<span class="' + self.iconCssPrefix + icon + '"></span>';
-            }
-            return $h.EMPTY;
+            var self = this;
+            return self.getConfig('icons', key) || $h.EMPTY;
         },
         render: function () {
-            var self = this, $el = self.$element, $container = $h.create('div').addClass('md-container'), $temp, out,
-                main = self.getLayout('main'), TEMP_CSS = 'md-editor-input-temporary', $form, $target,
+            var self = this, $el = self.$element, $container = $h.create('div').addClass('md-container'), out,
+                main = self.getLayout('main'), TEMP_CSS = 'md-editor-input-temporary',
                 contId = $el.attr('id') + '-container';
             if (!main) {
                 return $h.EMPTY;
@@ -1508,16 +1473,14 @@
             if (self.theme) {
                 $h.addCss($container, 'md-' + self.theme);
             }
-            out = main.replace('{input}', '<div class="' + TEMP_CSS + '"></div>')
-                .replace('{header}', self.renderHeader())
-                .replace('{footer}', self.renderFooter())
-                .replace('{preview}', self.getLayout('preview'))
-                .replace('{dialog}', self.getLayout('dialog'));
+            out = main.replace('{INPUT}', '<div class="' + TEMP_CSS + '"></div>')
+                .replace('{HEADER}', self.renderHeader())
+                .replace('{FOOTER}', self.renderFooter())
+                .replace('{PREVIEW}', self.getLayout('preview'))
+                .replace('{DIALOG}', self.getLayout('dialog'));
             $container.attr('id', contId).insertBefore($el).html(out);
-            $temp = $container.find('.' + TEMP_CSS);
-            $el.insertBefore($temp);
+            $container.find('.' + TEMP_CSS).before($el).remove();
             $h.addCss($el, self.inputCss);
-            $temp.remove();
             self.$container = $container;
             self.$editor = $container.find('.md-editor');
             self.$preview = $container.find('.md-preview');
@@ -1572,16 +1535,15 @@
             return btns;
         },
         renderHint: function () {
-            var self = this, txt, tag = '{accessKeys}', keys, icon, ttl, i, isHead, css;
+            var self = this, txt, tag = '{ACCESS_KEYS}', keys, icon, ttl, i, css;
             txt = self.getLayout('hint').replace('{LINK_CM}', $h.LINK_CM).replace('{LINK_MI}', $h.LINK_MI);
             if (txt.indexOf(tag) === -1) {
                 return txt;
             }
             keys = '<div class="md-hint-access-keys"><ul>';
-            
-            $.each (self.getValidButtons(), function (idx, btn) {
+            $.each(self.getValidButtons(), function (idx, btn) {
                 var key;
-                css = self.buttonCss[btn] || self.defaultButtonCss;
+                css = self.getConfig('buttonCss', btn) || self.defaultButtonCss;
                 if (btn === 'heading') {
                     for (i = 1; i <= 6; i++) {
                         icon = self.renderIcon('heading') + i;
@@ -1596,12 +1558,11 @@
                         icon = self.renderIcon(btn);
                         ttl = self.getConfig('buttonTitles', btn);
                         keys += '<li title="' + ttl + '"><p>' + '<span class="' + css + '">' + icon +
-                        '</span></p><p><kbd>ALT</kbd> &ndash; <kbd>' + key + '</kbd></p></li>';
+                            '</span></p><p><kbd>ALT</kbd> &ndash; <kbd>' + key + '</kbd></p></li>';
                     }
                 }
-                
+
             });
-            
             keys += '</ul></div>';
             return txt.replace(tag, keys);
         },
@@ -1618,19 +1579,22 @@
             return footer;
         },
         renderToolbar: function (layout, type) {
-            var self = this, tag = '{' + type + '}', css, btn, out = '', attr = '';
+            var self = this, tag, t = type.toUpperCase(), css, btn, out = '', attr = '';
+            tag = '{' + t.substring(0, 7) + '_' + t.substring(7, 13) + '_' + t.substring(13, 14) + '}';
             if (layout.indexOf(tag) === -1) {
                 return layout;
             }
-            console.log( type);
             $.each(self[type], function (k, v) {
                 if (!$.isArray(v)) {
                     v = [v];
                 }
                 btn = '';
-                css = self.buttonGroupCss;
                 $.each(v, function (grp, key) {
+                    css = self.getConfig('buttonGroupCss', key) || self.defaultButtonGroupCss;
                     btn += self.renderButton(key) + '\n';
+                    if (self.previewModeButtons.indexOf(key) !== -1) {
+                        css += ' md-always-visible';
+                    }
                     if (key === 'mode') {
                         css += ' btn-group-toggle md-btn-mode';
                         attr = ' data-toggle="buttons"';
@@ -1638,8 +1602,7 @@
                 });
                 out += '<div class="' + css + '" role="group"' + attr + '>\n' + btn + '</div>\n';
             });
-            
-            return layout.replace('{' + type + '}', out);
+            return layout.replace(tag, out);
         },
         getFileName: function (key) {
             var self = this, name = self.exportFileName, cfg = self.getConfig('exportConfig', key),
@@ -1655,7 +1618,7 @@
                 title = self.getConfig('buttonTitles', type);
                 out = title + ' ' + btn;
             }
-            $a = $h.create('a').attr({
+            $a = $h.create('a', {
                 'href': '#',
                 'class': 'dropdown-item md-btn-' + type + ' md-btn-' + key,
                 'title': title,
@@ -1668,7 +1631,7 @@
         },
         getEmojies: function () {
             var self = this, out = '';
-            if ($h.isEmpty(self.markdownItEmojies)) {
+            if (!self.enableEmojies || $h.isEmpty(window.mdEmojies)) {
                 return '';
             }
             out = '<li class="md-emoji-search"><span class="md-close">&times;</span>' +
@@ -1690,7 +1653,7 @@
             return out;
         },
         getModeButton: function (type) {
-            var self = this, css = self.buttonCss[type] || self.defaultButtonCss || '', checked = '',
+            var self = this, css = self.getConfig('buttonCss', type) || self.defaultButtonCss || '', checked = '',
                 mode = type.substr(4).toLowerCase(), key = self.getConfig('buttonAccessKeys', type) || '';
             if (self.defaultMode === mode) {
                 css += ' active';
@@ -1702,23 +1665,20 @@
         },
         renderButton: function (key) {
             var self = this, $btn, $div, icon, title, label, t, i, out, btnCss,
-                icon = self.getConfig('icons', key), 
+                icon = self.getConfig('icons', key), defDropCss = self.getConfig('dropdownCss', key),
                 isValid = key === 'mode' || icon !== undefined || self.getConfig('buttonActions', key) !== undefined,
                 dropCss, css = 'md-btn-' + key, tag = self.isBs4 && key !== 'emoji' ? 'div' : 'ul';
             if (!isValid || (!self.enableUndoRedo && (key === 'undo' || key === 'redo' || key === 'editor'))) {
                 return $h.EMPTY;
             }
-            btnCss = self.buttonCss[key] || self.defaultButtonCss;
+            btnCss = self.getConfig('buttonCss', key) || self.defaultButtonCss;
             $div = $h.create('div');
-            $btn = $h.create('button').attr({type: 'button', 'data-key': key});
+            $btn = $h.create('button', {type: 'button', 'data-key': key});
             icon = self.renderIcon(key);
             title = self.getConfig('buttonTitles', key) || $h.EMPTY;
             label = self.getConfig('buttonLabels', key) || $h.EMPTY;
             if (title) {
                 $btn.attr('title', title);
-            }
-            if (key === 'fullscreen' || key === 'hint' || key === 'mode') {
-                css += ' md-btn-special';
             }
             if (key === 'fullscreen') {
                 icon = '<span class="md-max-icon">' + icon + '</span>' +
@@ -1727,38 +1687,87 @@
             label = (icon && label) ? icon + ' ' + label : icon + label;
             $div.append($btn);
             switch (key) {
-                case 'heading':
-                case 'export':
                 case 'emoji':
-                    $btn.html(label + ' ').attr({'data-toggle': 'dropdown'}).append('<span class="caret"></span>');
-                    dropCss = self.dropdownCss[key] ? 'dropdown-menu ' + self.dropdownCss[key] : 'dropdown-menu';
+                case 'export':
+                case 'heading':
+                    $btn.html(label + ' ').attr({'data-toggle': 'dropdown'})
+                        .append('<span class="caret"></span>').addClass(btnCss + ' dropdown-toggle');
+                    dropCss = defDropCss ? 'dropdown-menu ' + defDropCss : 'dropdown-menu';
                     out = '<' + tag + ' class="' + dropCss + '">\n';
-                    if (key === 'heading' || key === 'emoji') {
-                        $btn.addClass(btnCss + ' dropdown-toggle md-btn-other');
-                        if (key === 'emoji') {
-                            out += self.getEmojies();
-                        } else {
-                            for (i = 1; i < 7; i++) {
-                                t = title + ' ' + i;
-                                out += self.renderMenuItem('heading', i);
-                            }
+                    if (key === 'heading') {
+                        for (i = 1; i < 7; i++) {
+                            t = title + ' ' + i;
+                            out += self.renderMenuItem('heading', i);
                         }
                     } else {
-                        if (key === 'export') {
-                            $btn.addClass(btnCss + ' dropdown-toggle');
-                            out += self.renderMenuItem(key, 'Html') +  self.renderMenuItem(key, 'Text');
-                        }
+                        out += (key === 'emoji') ? self.getEmojies() :
+                            self.renderMenuItem(key, 'Html') + self.renderMenuItem(key, 'Text');
                     }
                     out += '</' + tag + '>';
                     $div.append(out);
                     return $div.html();
                 case 'mode':
-                    return  self.getModeButton('modeEditor') + self.getModeButton('modePreview') +
+                    return self.getModeButton('modeEditor') + self.getModeButton('modePreview') +
                         (self.enableSplitMode ? self.getModeButton('modeSplit') : '');
                 default:
-                    $btn.attr('accesskey', self.getConfig('buttonAccessKeys', key)).html(label).addClass(btnCss + ' ' + css + ' md-btn');
+                    $btn.attr('accesskey', self.getConfig('buttonAccessKeys', key)).html(label)
+                        .addClass(btnCss + ' ' + css + ' md-btn');
                     return $div.html();
             }
+        },
+        _mergeAjaxCallback: function (funcName, srcFunc) {
+            var self = this, settings = self._ajaxSettings, flag = self.mergeAjaxCallbacks,
+                targFunc = settings[funcName];
+            if (flag && typeof targFunc === "function") {
+                if (flag === 'before') {
+                    settings[funcName] = function () {
+                        targFunc.apply(this, arguments);
+                        srcFunc.apply(this, arguments);
+                    };
+                } else {
+                    settings[funcName] = function () {
+                        srcFunc.apply(this, arguments);
+                        targFunc.apply(this, arguments);
+                    };
+                }
+            } else {
+                settings[funcName] = srcFunc;
+            }
+        },
+        _ajaxSubmit: function (val) {
+            var self = this, errorMsg = self.exportErrorMsg, fnBefore, fnSuccess, fnError, settings,
+                tHtm = self.getTitle('exportHtml');
+            fnBefore = function (jQXhr) {
+                if (self.raise('beforeExportHtm', [jQXhr])) {
+                    self.showPopup(tHtm, self.getProgress(self.exportProgressMsg));
+                }
+            };
+            fnSuccess = function (data, textStatus, jQXhr) {
+                if (self.raise('successExportHtm', [data, textStatus, jQXhr])) {
+                    self.$dialog.modal('hide');
+                    if (data) {
+                        self.download('exportHtml', self.getHtmlContent(data));
+                    } else {
+                        self.showPopupAlert(tHtm, errorMsg);
+                    }
+                }
+            };
+            fnError = function (jqXHR, textStatus, errorThrown) {
+                if (self.raise('errorExportHtm', [jqXHR, textStatus, errorThrown])) {
+                    self.showPopupAlert(tHtm, errorMsg);
+                }
+            };
+            self._ajaxSettings = $.extend(true, {}, self.ajaxSettings);
+            self._mergeAjaxCallback('beforeSend', fnBefore);
+            self._mergeAjaxCallback('success', fnSuccess);
+            self._mergeAjaxCallback('error', fnError);
+            settings = $.extend(true, {}, {
+                type: 'POST',
+                url: self.parserUrl,
+                dataType: "json",
+                data: {source: val}
+            }, self._ajaxSettings);
+            $.ajax(settings);
         }
     };
 
@@ -1797,9 +1806,8 @@
 
     $.fn.markdownEditor.defaults = {
         language: 'en',
-        theme: null, // default
-        rows: 15,
-        bsVersion: 4, // default (set it to 3 for bootstrap 3.x version)
+        theme: null, // default (uses fa5 theme)
+        bsVersion: $h.BS4_VER, // default (uses bs4 version)
         defaultMode: 'editor',
         enableUndoRedo: true,
         enableExportDataUri: true,
@@ -1807,7 +1815,8 @@
         enableLivePreview: undefined,
         enableScrollSync: true,
         startFullScreen: false,
-        templates: {},
+        enableEmojies: true,
+        useTwemoji: false,
         toolbarHeaderL: [
             ['undo', 'redo'],
             ['bold', 'italic', 'ins', 'del', 'sup', 'sub', 'mark'],
@@ -1830,10 +1839,12 @@
         ],
         exportPrependCssJs: undefined,
         dropUp: {
-            'export': true
+            export: true
         },
         parserUrl: $h.EMPTY,
         parserMethod: undefined,
+        ajaxSettings: {},
+        ajaxMergeCallbacks: true,
         markdownItOptions: {
             html: true,
             xhtmlOut: true,
@@ -1860,8 +1871,6 @@
                 idPrefix: 'cbx_'
             }
         },
-        markdownItEmojies: window.mdEmojies || {},
-        useTwemoji: false, //true,
         exportUrl: $h.EMPTY,
         exportMethod: 'post',
         exportAddlData: $h.EMPTY,
@@ -1870,19 +1879,17 @@
         outputParseTimeout: 1800000,
         exportConfig: $defaults.exportConfig,
         // following properties are generally theme related
+        templates: {},
         inputCss: 'md-input',
-        dropdownCss: {
-            emoji: 'md-emojies-list pull-right float-right'
-        },
-        defaultButtonCss: 'btn btn-default btn-outline-secondary',
-        buttonGroupCss: 'btn-group md-btn-group',
-        buttonCss: {
-            hint: 'btn btn-info',
-        },
-        buttonAccessKeys: {},
-        iconCssPrefix: 'fas fa-fw fa-',
-        icons: {},
         alertMsgCss: 'alert alert-danger',
+        defaultButtonCss: 'btn btn-default btn-outline-secondary',
+        defaultButtonGroupCss: 'btn-group md-btn-group',
+        previewModeButtons: ['hint', 'fullscreen', 'mode', 'export'],
+        buttonCss: {},
+        buttonGroupCss: {},
+        buttonAccessKeys: {},
+        dropdownCss: {},
+        icons: {},
         postProcess: {
             '<table>': '<table class="table table-bordered table-striped">',
             '<pre>': '<pre class="md-codeblock">',
@@ -1898,6 +1905,7 @@
         buttonLabels: {},
         buttonPrompts: {},
         buttonActions: {},
+        templates: {},
         dialogCancelText: 'Cancel',
         dialogSubmitText: 'Submit',
         previewErrorTitle: 'Preview Error',

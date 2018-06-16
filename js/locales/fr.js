@@ -16,7 +16,7 @@ $.fn.markdownEditorLocales.fr = {
         redo: "refaire",
         bold: "gras",
         italic: "italique",
-        ins: "texte inséré",
+        ins: "Souligné / texte inséré",
         del: "barré",
         sup: "exposant",
         sub: "Indice",
@@ -42,31 +42,33 @@ $.fn.markdownEditorLocales.fr = {
         modeEditor: "Le mode de l'éditeur",
         modePreview: "Mode Aperçu",
         modeSplit: "le mode Split",
-        'export': "Exportation de contenu",
+        export: "Exportation de contenu",
         exportHtml: "Exporter en HTML",
         exportText: "Exporter sous forme de texte"
     },
     buttonLabels: {
-        'export': "Exportation",
+        export: "Exportation",
         exportHtml: "HTML",
         exportText: "Texte"
     },
     buttonPrompts: {
         link: {
-            title: "Insérer un lien hypertexte",
-            placeholder: "http://"
+            header: "Insérer un lien hypertexte",
+            hintInput: "Entrez l'adresse du lien...",
+            hintTitle: "Entrez le texte du lien..."
         },
         image: {
-            title: "Insérer une image Lien",
-            placeholder: "http://"
+            header: "Insérer un lien d'image",
+            hintInput: "Entrez l'adresse du lien de l'image...",
+            hintTitle: "Entrez un autre texte pour l'image..."
         },
         ol: {
-            title: "Liste ordonnée numéro de départ",
-            placeholder: "Integer à partir de 1"
+            header: "Numéro de départ de la liste ordonnée",
+            hintInput: "Entier à partir de 1"
         },
         codeblock: {
-            title: "Entrez le code de la langue",
-            placeholder: "par exemple. HTML, PHP, JS"
+            header: "Entrez la langue du code",
+            hintInput: "par exemple. html, php, js"
         }
     },
     buttonActions: {
@@ -85,14 +87,23 @@ $.fn.markdownEditorLocales.fr = {
         heading5: {markup: "##### (la rubrique 5 texte ici)"},
         heading6: {markup: "###### (la rubrique 6 texte ici)"}
     },
-    hintText: "<ul><li><p>Vous pouvez suivre le {LINK_CM} spécification (généré via {LINK_MI} plugin) pour écrire votre texte de démarque.</p></li>" +
-    "<li><p>Pour utiliser les boutons de mise en forme de la barre d'outils, vous devez généralement mettre en surbrillance un texte " +
-    "dans l'éditeur sur lequel le formatage doit être appliqué. Vous pouvez également annuler l'action de format sur le " +
-    "texte en surbrillance en cliquant à nouveau sur le bouton (pour la plupart des boutons).</p></li>" +
-    "<li><p>raccourcis d'accès au clavier pour les boutons:</p>" +
-    "{accessKeys}" +
-    "</li>" +
-    "</ul>",
+    templates: {
+        exportHeader: "> - - -\n" +
+        "> Markdown Export\n" +
+        "> ==============\n" +
+        "> *Généré {today} par {credits}*\n" +
+        "> - - -\n\n",
+        hint: "<ul>\n" +
+        "  <li><p>Vous pouvez suivre la spécification {LINK_CM} (générée via {LINK_MI} plugin) pour écrire votre texte de démarque.</p></li>\n" +
+        "  <li><p>Pour utiliser les boutons de formatage de la barre d'outils, vous devez généralement mettre en " +
+        "  surbrillance un texte dans l'éditeur sur lequel le formatage doit être appliqué. Vous pouvez également " +
+        "  annuler l'action de format sur le texte en surbrillance en cliquant à nouveau sur le bouton " +
+        " (pour la plupart des boutons).</p></li>\n" +
+        "  <li><p>Raccourcis d'accès au clavier pour les boutons:</p>" +
+        "    {accessKeys}" +
+        "  </li>\n" +
+        "</ul>"
+    },
     dialogCancelText: "Annuler",
     dialogOkText: "D'accord",
     previewErrorTitle: "Aperçu erreur",
