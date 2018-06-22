@@ -39,7 +39,7 @@
     $h = {
         CREDITS: '<a class="text-info" href="http://plugins.krajee.com/markdown-editor">krajee-markdown-editor</a>',
         CREDITS_MD: '[krajee-markdown-editor](http://plugins.krajee.com/markdown-editor)',
-        BS4_VER: '4.2.1',
+        BS4_VER: '4.1.1',
         BS3_VER: '3.3.7',
         DEFAULT_TIMEOUT: 250,
         EMPTY: '',
@@ -205,6 +205,28 @@
      * Default configurations for templates, icons, buttons, and export
      */
     $defaults = {
+        toolbar: {
+            toolbarHeaderL: [
+                ['undo', 'redo'],
+                ['bold', 'italic', 'ins', 'del', 'sup', 'sub', 'mark'],
+                ['paragraph', 'newline', 'heading'],
+                ['link', 'image'],
+                ['indent', 'outdent', 'ul', 'ol', 'dl'],
+                ['footnote', 'blockquote', 'hr'],
+                ['code', 'codeblock'],
+                ['emoji']
+            ],
+            toolbarHeaderR: [
+                ['fullscreen']
+            ],
+            toolbarFooterL: [
+                ['hint'],
+                ['export']
+            ],
+            toolbarFooterR: [
+                ['mode']
+            ]
+        },
         templates: {
             main: '<div class="md-editor" tabindex="0">\n' +
             '  {HEADER}\n' +
@@ -272,7 +294,7 @@
             exportHeader: '> - - -\n' +
             '> Markdown Export\n' +
             '> ==============\n' +
-            '> *Generated {today} by {credits}*\n' +
+            '> *Generated {TODAY} by {CREDITS}*\n' +
             '> - - -\n\n',
             hint: '<ul>\n' +
             '  <li><p>You may follow the {LINK_CM} specification (generated via {LINK_MI} plugin) for writing your markdown text.</p></li>\n' +
@@ -663,6 +685,8 @@
             $.each(options, function (key, value) {
                 self[key] = value;
             });
+            self.initToolbar();
+            self.isDisabled = $el.attr('disabled') || $el.attr('readonly');
             if (!$el.attr('id')) {
                 $el.attr('id', $h.uniqueId());
             }
@@ -683,20 +707,45 @@
             self.setDefaults('exportConfig');
             self.setDefaults('templates');
             self.defaultInputHeight = $el.height();
-            /** @namespace window.markdownit */
-            if ($h.isEmpty(self.parserUrl) && self.parserMethod === undefined && window.markdownit) {
+            if (self.enableSplitMode && self.enableLivePreview === undefined) {
+                self.enableLivePreview = true;
+            }
+            self.render();
+            self.$preview.height(self.defaultInputHeight);
+            $el.height(self.defaultInputHeight);
+            if (self.startFullScreen) {
+                self.toggleFullScreen();
+            }
+            self.initLibrary();
+            self.reset();
+            self.listen();
+        },
+        getLibrary: function () {
+            return this._library || null;
+        },
+        initLibrary: function () {
+            var self = this, md;
+            if (!window.markdownit) {
+                if (console && typeof console.log === "function") {
+                    console.log('INIT LIBRARY ERROR: Markdown IT Library not found or not loaded.');
+                }
+                return;
+            }
+            md = self._library = window.markdownit(self.markdownItOptions);
+            $.each(self.markdownItPlugins, function (plugin, opts) {
+                if (window[plugin]) {
+                    md.use(window[plugin], opts);
+                }
+            });
+            if (!$h.isEmpty(self.markdownItDisabledRules)) {
+                md.disable(self.markdownItDisabledRules);
+            }
+            if ($h.isEmpty(self.parserUrl) && self.parserMethod === undefined) {
                 self.parserMethod = function (data) {
-                    var md = window.markdownit(self.markdownItOptions);
-                    if (!$h.isEmpty(self.markdownItDisabledRules)) {
-                        md.disable(self.markdownItDisabledRules);
-                    }
-                    $.each(self.markdownItPlugins, function (plugin, opts) {
-                        md.use(window[plugin], opts);
-                    });
                     md.renderer.rules.emoji = function (token, idx) {
                         //noinspection JSUnresolvedVariable
                         return self.useTwemoji && window.twemoji ? window.twemoji.parse(token[idx].content) :
-                            '<span class="md-emoji">' + token[idx].markup + '</span>';
+                            '<span class="md-emoji">' + token[idx].content + '</span>';
                     };
                     md.renderer.rules.paragraph_open = md.renderer.rules.heading_open =
                         function (tokens, idx, options, env, slf) {
@@ -711,17 +760,6 @@
                     return md.render(data);
                 };
             }
-            if (self.enableSplitMode && self.enableLivePreview === undefined) {
-                self.enableLivePreview = true;
-            }
-            self.render();
-            self.$preview.height(self.defaultInputHeight);
-            $el.height(self.defaultInputHeight);
-            if (self.startFullScreen) {
-                self.toggleFullScreen();
-            }
-            self.reset();
-            self.listen();
         },
         setDefaults: function (param) {
             var self = this;
@@ -757,7 +795,6 @@
             self.handleEvent($preview, eFocus, 'focus');
             self.handleEvent($el, eBlur, 'blur');
             self.handleEvent($preview, eBlur, 'blur');
-            self.handleEvent(self.$editor, eFocus, 'focusContainer');
             self.handleEvent($(window), eResize, 'resizeWindow');
             if ($form.length) {
                 self.handleEvent($form, eReset, 'reset');
@@ -768,7 +805,7 @@
             self.handleEvent($el, eBtnPress, 'buttonPress');
             self.handleEvent($el, eTouchMouse, 'mouseoverEditor');
             self.handleEvent($preview, eTouchMouse, 'mouseoverPreview');
-            self.handleEvent(self.$modeInput, eChange, 'modeChange');
+            self.handleEvent(self.$modeInput, eChange, 'changeMode');
             if ($search.length) {
                 self.handleEvent($search.find('input'), eKeyup, 'emojiSearch');
                 self.handleEvent($search.find('.md-close'), eClick, 'emojiSearchClose');
@@ -812,12 +849,6 @@
                 $search.find('input').val('');
             });
         },
-        focusContainer: function (event) {
-            var self = this;
-            $h.handler(event, function () {
-                self.$element.focus();
-            });
-        },
         focus: function (event) {
             var self = this;
             $h.handler(event, function () {
@@ -834,13 +865,16 @@
             var self = this, ttl, key = $btn.data('key'), txt, isHeading = $btn.hasClass('md-btn-heading'),
                 isExport = $btn.hasClass('md-btn-export'), isEmoji = $btn.hasClass('md-btn-emoji');
             $h.handler(event, function () {
+                if (self.isDisabled && !self.isPreviewModeButton(key)) {
+                    return false;
+                }
                 if (isHeading || isExport || isEmoji) {
                     event.preventDefault();
-                    if (isExport) {
+                    if (isExport && self.raise('clickExport', [key])) {
                         self.exportData(key);
                         return;
                     }
-                    if (isEmoji) {
+                    if (isEmoji && self.raise('clickEmoji', [key, ':' + key + ':'])) {
                         self.replaceSelected(':' + key + ':');
                         return;
                     }
@@ -855,18 +889,22 @@
                         break;
                     default:
                         txt = self.process(key);
-                        if (!$h.isEmpty(txt)) {
+                        if (self.raise('clickButton', [key, txt]) && !$h.isEmpty(txt)) {
                             self.replaceSelected(txt);
                         }
                 }
             });
         },
-        modeChange: function (event) {
-            var self = this, val;
+        changeMode: function (event) {
+            var self = this, val, m;
             $h.handler(event, function () {
                 val = self.$mode.find('input:radio[name="mdMode"]:checked').val() || 'modeEditor';
+                m = val.substr(4).toLowerCase();
+                if (!self.raise('changeMode', [m])) {
+                    return;
+                }
                 self.toggleMode(val);
-                self.currentMode = val.substr(4).toLowerCase();
+                self.currentMode = m;
             });
         },
         reset: function (event) {
@@ -891,7 +929,7 @@
         },
         undo: function (event) {
             var self = this;
-            if (!self.enableUndoRedo) {
+            if (!self.enableUndoRedo || !self.raise('undo', [self.undoStack])) {
                 return;
             }
             $h.handler(event, function () {
@@ -904,7 +942,7 @@
         },
         redo: function (event) {
             var self = this;
-            if (!self.enableUndoRedo) {
+            if (!self.enableUndoRedo || !self.raise('undo', [self.undoStack])) {
                 return;
             }
             $h.handler(event, function () {
@@ -951,6 +989,9 @@
         buttonPress: function (event, oldPos, newPos) {
             var self = this, $el = self.$element, newValue;
             $h.handler(event, function () {
+                if (self.isDisabled) {
+                    return;
+                }
                 if (self.enableUndoRedo) {
                     newValue = $el.val();
                     self.startPos = oldPos;
@@ -1091,6 +1132,10 @@
                 scrollTop: posTo
             }, 100, 'linear');
         },
+        isPreviewModeButton: function (key) {
+            var self = this;
+            return self.previewModeButtons.indexOf(key) !== -1;
+        },
         resetUndoStack: function () {
             var self = this, stack = new UndoStack();
             self.startValue = self.$element.val();
@@ -1228,8 +1273,12 @@
             $preview.find('.md-preview-message').width(0.5 * $preview.width());
             $preview.find('.md-alert').hide().fadeIn('slow');
         },
-        disableButton: function ($btn, attr) {
-            $btn.attr('disabled', (attr || false));
+        disableButton: function ($btn, flag) {
+            if (flag) {
+                $btn.attr('disabled', true);
+            } else {
+                $btn.removeAttr('disabled');
+            }
         },
         hasInvalidConfig: function (type) {
             var self = this, urlProp = self[type + 'Url'], methodProp = self[type + 'Method'],
@@ -1257,8 +1306,12 @@
             }
             return data;
         },
-        generatePreview: function (val, ignorePreviewUpdate) {
-            var self = this, $el = self.$element, $preview = self.$preview, parser = self.parserMethod;
+        getPureHtml: function(src) {
+            var self = this;
+            return self.purifyHtml && window.DOMPurify ? window.DOMPurify.sanitize(src) : src;
+        },
+        getHtml: function(val) {
+            var self = this, $el = self.$element, parser = self.parserMethod;
             if (val === undefined) {
                 val = $el.val();
             }
@@ -1268,10 +1321,14 @@
             }
             val = typeof parser === "function" ? parser(val) : new parser(val); // jshint ignore:line
             val = self.parseOutput(val);
+            return self.getPureHtml(val);
+        },
+        generatePreview: function (val, ignorePreviewUpdate) {
+            var self = this, out = self.getHtml(val);
             if (!ignorePreviewUpdate) {
-                $preview.html(val);
+                self.$preview.html(out);
             } else {
-                return val;
+                return out;
             }
         },
         output: function () {
@@ -1335,12 +1392,16 @@
         toggleFullScreen: function () {
             var self = this, $cont = self.$container, $el = self.$element, $preview = self.$preview;
             if ($cont.hasClass('md-fullscreen-overlay')) {
-                $cont.removeClass('md-fullscreen-overlay');
-                $el.height(self.defaultInputHeight);
-                $preview.height(self.defaultInputHeight);
+                if (self.raise('normalScreen')) {
+                    $cont.removeClass('md-fullscreen-overlay');
+                    $el.height(self.defaultInputHeight);
+                    $preview.height(self.defaultInputHeight);
+                }
             } else {
-                $cont.addClass('md-fullscreen-overlay');
-                self.resizeFullScreen();
+                if (self.raise('fullScreen')) {
+                    $cont.addClass('md-fullscreen-overlay');
+                    self.resizeFullScreen();
+                }
             }
             if (!$preview.is(':visible')) {
                 $el.focus();
@@ -1358,7 +1419,9 @@
         process: function (key) {
             var self = this, $el = self.$element, str = self.getSelected(), len = str.length, out, def, bef, aft,
                 action = self.getConfig('buttonActions', key);
-            $el.focus();
+            if (key !== 'mode' && key.substring(0, 6) !== 'export') {
+                $el.focus();
+            }
             if (key === 'undo' || key === 'redo') {
                 return '';
             }
@@ -1448,8 +1511,8 @@
                 self.showPopupAlert(key === 'exportText' ? tTxt : tHtm, $h.isEmpty(source) ? noDataMsg : noUrlMsg);
                 return;
             }
-            source = self.getLayout('exportHeader').replace('{today}', today)
-                .replace('{credits}', $h.CREDITS_MD) + source;
+            source = self.getLayout('exportHeader').replace('{TODAY}', today)
+                .replace('{CREDITS}', $h.CREDITS_MD) + source;
             if (key !== 'exportHtml') {
                 self.download('exportText', source);
                 return;
@@ -1471,7 +1534,7 @@
                 return $h.EMPTY;
             }
             if (self.theme) {
-                $h.addCss($container, 'md-' + self.theme);
+                $h.addCss($container, 'theme-' + self.theme);
             }
             out = main.replace('{INPUT}', '<div class="' + TEMP_CSS + '"></div>')
                 .replace('{HEADER}', self.renderHeader())
@@ -1519,19 +1582,27 @@
                 }
             });
         },
-        _toolbar: function (type) {
+        initToolbar: function () {
+            var self = this, toolbars = ['toolbarHeaderL', 'toolbarHeaderR', 'toolbarFooterL', 'toolbarFooterR'];
+            $.each(toolbars, function (key, type) {
+                if (self[type] === undefined || !$.isArray(self[type])) {
+                    self[type] = $defaults.toolbar[type];
+                }
+            });
+        },
+        getButtons: function (toolbar) {
             var self = this, btns = [];
-            $.each(self[type], function (i, row) {
+            $.each(self[toolbar], function (i, row) {
                 var btn = $.isArray(row) ? row : [row];
                 $.merge(btns, btn);
             });
             return btns;
         },
         getValidButtons: function () {
-            var self = this, btns = self._toolbar('toolbarHeaderL');
-            $.merge(btns, self._toolbar('toolbarHeaderR'));
-            $.merge(btns, self._toolbar('toolbarFooterL'));
-            $.merge(btns, self._toolbar('toolbarFooterR'));
+            var self = this, btns = self.getButtons('toolbarHeaderL');
+            $.merge(btns, self.getButtons('toolbarHeaderR'));
+            $.merge(btns, self.getButtons('toolbarFooterL'));
+            $.merge(btns, self.getButtons('toolbarFooterR'));
             return btns;
         },
         renderHint: function () {
@@ -1592,7 +1663,7 @@
                 $.each(v, function (grp, key) {
                     css = self.getConfig('buttonGroupCss', key) || self.defaultButtonGroupCss;
                     btn += self.renderButton(key) + '\n';
-                    if (self.previewModeButtons.indexOf(key) !== -1) {
+                    if (self.isPreviewModeButton(key)) {
                         css += ' md-always-visible';
                     }
                     if (key === 'mode') {
@@ -1664,16 +1735,17 @@
                 '"' + checked + '>' + self.renderIcon(type) + '</label>';
         },
         renderButton: function (key) {
-            var self = this, $btn, $div, icon, title, label, t, i, out, btnCss,
-                icon = self.getConfig('icons', key), defDropCss = self.getConfig('dropdownCss', key),
+            var self = this, $btn, $div, icon, title, label, t, i, out, btnCss, icon = self.getConfig('icons', key),
+                css = 'md-btn-' + key, dropCss, defDropCss = self.getConfig('dropdownCss', key),
                 isValid = key === 'mode' || icon !== undefined || self.getConfig('buttonActions', key) !== undefined,
-                dropCss, css = 'md-btn-' + key, tag = self.isBs4 && key !== 'emoji' ? 'div' : 'ul';
+                tag = self.isBs4 && key !== 'emoji' ? 'div' : 'ul';
             if (!isValid || (!self.enableUndoRedo && (key === 'undo' || key === 'redo' || key === 'editor'))) {
                 return $h.EMPTY;
             }
             btnCss = self.getConfig('buttonCss', key) || self.defaultButtonCss;
             $div = $h.create('div');
             $btn = $h.create('button', {type: 'button', 'data-key': key});
+            self.disableButton($btn, self.isDisabled && !self.isPreviewModeButton(key));
             icon = self.renderIcon(key);
             title = self.getConfig('buttonTitles', key) || $h.EMPTY;
             label = self.getConfig('buttonLabels', key) || $h.EMPTY;
@@ -1736,7 +1808,7 @@
         },
         _ajaxSubmit: function (val) {
             var self = this, errorMsg = self.exportErrorMsg, fnBefore, fnSuccess, fnError, settings,
-                tHtm = self.getTitle('exportHtml');
+                tHtm = self.getTitle('exportHtml'), pureHtml;
             fnBefore = function (jQXhr) {
                 if (self.raise('beforeExportHtm', [jQXhr])) {
                     self.showPopup(tHtm, self.getProgress(self.exportProgressMsg));
@@ -1746,7 +1818,8 @@
                 if (self.raise('successExportHtm', [data, textStatus, jQXhr])) {
                     self.$dialog.modal('hide');
                     if (data) {
-                        self.download('exportHtml', self.getHtmlContent(data));
+                        pureHtml = self.getPureHtml(data);
+                        self.download('exportHtml', self.getHtmlContent(pureHtml));
                     } else {
                         self.showPopupAlert(tHtm, errorMsg);
                     }
@@ -1817,26 +1890,11 @@
         startFullScreen: false,
         enableEmojies: true,
         useTwemoji: false,
-        toolbarHeaderL: [
-            ['undo', 'redo'],
-            ['bold', 'italic', 'ins', 'del', 'sup', 'sub', 'mark'],
-            ['paragraph', 'newline', 'heading'],
-            ['link', 'image'],
-            ['indent', 'outdent', 'ul', 'ol', 'dl'],
-            ['footnote', 'blockquote', 'hr'],
-            ['code', 'codeblock'],
-            ['emoji']
-        ],
-        toolbarHeaderR: [
-            ['fullscreen']
-        ],
-        toolbarFooterL: [
-            ['hint'],
-            ['export']
-        ],
-        toolbarFooterR: [
-            ['mode']
-        ],
+        purifyHtml: true, // requires purify.js plugin
+        toolbarHeaderL: undefined,
+        toolbarHeaderR: undefined,
+        toolbarFooterL: undefined,
+        toolbarFooterR: undefined,
         exportPrependCssJs: undefined,
         dropUp: {
             export: true
@@ -1846,8 +1904,9 @@
         ajaxSettings: {},
         ajaxMergeCallbacks: true,
         markdownItOptions: {
-            html: true,
+            html: false,
             xhtmlOut: true,
+            breaks: true,
             linkify: true,
             typographer: true,
             highlight: function (code) {
@@ -1869,7 +1928,8 @@
                 divWrap: true,
                 divClass: 'form-check checkbox',
                 idPrefix: 'cbx_'
-            }
+            },
+            markdownitCjkBreaks: {}
         },
         exportUrl: $h.EMPTY,
         exportMethod: 'post',

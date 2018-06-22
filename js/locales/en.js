@@ -91,7 +91,7 @@ $.fn.markdownEditorLocales['en-US'] = $.fn.markdownEditorLocales['en-GB'] = $.fn
         exportHeader: '> - - -\n' +
         '> Markdown Export\n' +
         '> ==============\n' +
-        '> *Generated {today} by {credits}*\n' +
+        '> *Generated {TODAY} by {CREDITS}*\n' +
         '> - - -\n\n',
         hint: '<ul>\n' +
         '  <li><p>You may follow the {LINK_CM} specification (generated via {LINK_MI} plugin) for writing your markdown text.</p></li>\n' +
@@ -99,7 +99,7 @@ $.fn.markdownEditorLocales['en-US'] = $.fn.markdownEditorLocales['en-GB'] = $.fn
         '  within the editor on which the formatting is to be applied. You can also undo the format action on the ' +
         '  highlighted text by clicking the button again (for most buttons).</p></li>\n' +
         '  <li><p>Keyboard access shortcuts for buttons:</p>' +
-        '    {accessKeys}' +
+        '    {ACCESS_KEYS}' +
         '  </li>\n' +
         '</ul>'
     },

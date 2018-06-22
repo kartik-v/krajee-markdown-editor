@@ -60,12 +60,12 @@ $url_0: url(../img/loading.gif) !default;
     padding: 0;
     margin: 0;
     border: 0;
-    transition: all .5s ease;
+    transition: width .1s ease;
 }
 
 .md-container {
     background: $white;
-    transition: all .5s ease;
+    transition: width .1s ease;
 }
 
 .md-input-cell {
@@ -295,7 +295,7 @@ $url_0: url(../img/loading.gif) !default;
         list-style: none;
     }
     li {
-        transition: all .5s ease;
+        transition: all .1s ease;
         float: left;
         width: 20%;
         height: 100px;
@@ -306,6 +306,9 @@ $url_0: url(../img/loading.gif) !default;
         &:hover {
             background-color: $color_regent_st_blue;
         }
+    }
+    .btn {
+        padding: 3px 6px;
     }
 }
 

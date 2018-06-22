@@ -91,7 +91,7 @@ $.fn.markdownEditorLocales.fr = {
         exportHeader: "> - - -\n" +
         "> Markdown Export\n" +
         "> ==============\n" +
-        "> *Généré {today} par {credits}*\n" +
+        "> *Généré {TODAY} par {CREDITS}*\n" +
         "> - - -\n\n",
         hint: "<ul>\n" +
         "  <li><p>Vous pouvez suivre la spécification {LINK_CM} (générée via {LINK_MI} plugin) pour écrire votre texte de démarque.</p></li>\n" +
@@ -100,7 +100,7 @@ $.fn.markdownEditorLocales.fr = {
         "  annuler l'action de format sur le texte en surbrillance en cliquant à nouveau sur le bouton " +
         " (pour la plupart des boutons).</p></li>\n" +
         "  <li><p>Raccourcis d'accès au clavier pour les boutons:</p>" +
-        "    {accessKeys}" +
+        "    {ACCESS_KEYS}" +
         "  </li>\n" +
         "</ul>"
     },

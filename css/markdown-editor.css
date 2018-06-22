@@ -15,10 +15,10 @@
 }
 
 .md-container, .md-input-cell, .md-preview-cell {
-    -webkit-transition: all .5s ease;
-    -moz-transition: all .5s ease;
-    -o-transition: all .5s ease;
-    transition: all .5s ease;
+    -webkit-transition: width .1s ease;
+    -moz-transition: width .1s ease;
+    -o-transition: width .1s ease;
+    transition: width .1s ease;
 }
 
 .md-editor {
@@ -37,11 +37,11 @@
     padding: 0 2px;
 }
 
-.md-editor .md-header  {
+.md-editor .md-header {
     border-radius: 4px 4px 0 0;
 }
 
-.md-editor .md-footer  {
+.md-editor .md-footer {
     border-radius: 0 0 4px 4px;
 }
 
@@ -274,10 +274,10 @@
 }
 
 .md-hint-access-keys li {
-    -webkit-transition: all .5s ease;
-    -moz-transition: all .5s ease;
-    -o-transition: all .5s ease;
-    transition: all .5s ease;
+    -webkit-transition: all .1s ease;
+    -moz-transition: all .1s ease;
+    -o-transition: all .1s ease;
+    transition: all .1s ease;
     float: left;
     width: 20%;
     height: 100px;
@@ -285,6 +285,10 @@
     text-align: center;
     background-color: #f5f5f5;
     border: 1px solid #fff;
+}
+
+.md-hint-access-keys .btn {
+    padding: 3px 6px;
 }
 
 .md-emoji {

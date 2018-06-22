@@ -21,10 +21,10 @@ A Boostrap styled markdown editor that converts a native HTML textarea to an adv
 - Advanced additional support for emojis and emoticons to be inserted. The editor also supports using rendering emojis using [twitter emojis {twemoji}](https://github.com/twitter/twemoji).
 - The editor can be configured to use any markdown based parser OR even use a server based parsing via AJAX action.
 - Inbuilt live preview and conversion of the markdown text to HTML formatted text. The editor can be toggled and configured to be set in one of the three modes:
-   - Editor Mode: Displays only the editor for editing the markdown text.
-   - Preview Mode: Displays only the preview for viewing the HTML formatted text.
-   - Split Mode: Shows both the editor and preview modes split side by side.
-- One can configure the editor to by default open in one of the above modes.
+   - *Editor Mode:* Displays only the editor for editing the markdown text.
+   - *Preview Mode:* Displays only the preview for viewing the HTML formatted text.
+   - *Split Mode:* Shows both the editor and preview modes split side by side.
+- One can configure the editor to by default to open in one of the above modes.
 - Offers live preview and **synchronized scrolling** between editor and preview when typing text OR scrolling in the editor. This is especially useful in the Split Mode.
 - The editor also includes inbuilt support for FULL SCREEN mode toggling and editing. One can toggle the editor to FULL screen for any of the above modes. 
 - One can also configure the editor to by default open in full screen mode if needed.
@@ -84,44 +84,55 @@ You can also manually install the plugin easily to your project. Just download t
 Step 1: Load the following assets in your header. Please read the accompanying comments to understand optional components. 
 
 ```html
-<!-- core styling assets -->
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
-<link href="path/to/css/markdown-editor.min.css" media="all" rel="stylesheet" type="text/css" />
-
-<!-- font awesome is needed for toolbar iconic buttons. In case you wish to override icons you can skip this -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-
-<!-- load any highlight.js CSS theme if using code syntax styling via highlight.js -->
-<link href="path/to/plugins/highlight/default.min.css" media="all" rel="stylesheet" type="text/css"/>
-
-<!-- core scripts -->
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="path/to/js/markdown-editor.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" type="text/javascript"></script>
-
-<!-- if using translations for your language then include locale file as mentioned below after markdown-editor.js -->
-<script src="path/to/js/locales/<lang>.js"></script>
-
-<!-- load if using code syntax styling via highlight.js -->
-<script src="path/to/plugins/highlight/highlight.min.js" type="text/javascript"></script>
-
-<!-- the plugin supports markdown-it parser by default and you need to include this if using this default parser -->
-<script src="path/to/plugins/markdown-it/markdown-it.min.js" type="text/javascript"></script>
-
-<!-- the markdown-it plugins depending on the functionality used within these plugins -->
-<script src="path/to/plugins/markdown-it/markdown-it-deflist.min.js" type="text/javascript"></script>
-<script src="path/to/plugins/markdown-it/markdown-it-footnote.min.js" type="text/javascript"></script>
-<script src="path/to/plugins/markdown-it/markdown-it-abbr.min.js" type="text/javascript"></script>
-<script src="path/to/plugins/markdown-it/markdown-it-sub.min.js" type="text/javascript"></script>
-<script src="path/to/plugins/markdown-it/markdown-it-sup.min.js" type="text/javascript"></script>
-<script src="path/to/plugins/markdown-it/markdown-it-ins.min.js" type="text/javascript"></script>
-<script src="path/to/plugins/markdown-it/markdown-it-mark.min.js" type="text/javascript"></script>
-<script src="path/to/plugins/markdown-it/markdown-it-emoji.min.js" type="text/javascript"></script>
-<script src="path/to/plugins/markdown-it/markdown-it-smartarrows.min.js" type="text/javascript"></script>
-<script src="path/to/plugins/markdown-it/markdown-it-checkbox.min.js" type="text/javascript"></script>
-
-<!-- load if using twitter emojis (twemoji) -->
-<script src="http://cdnjs.cloudflare.com/ajax/libs/twemoji/1.3.2/twemoji.min.js"></script>
+<!-- bootstrap 4.x styling is supported. You can also use the bootstrap css 3.3.x and set the `bsVersion` -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome 5.x Icon library (check themes to change this) -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css">
+<!-- Krajee Markdown Editor Main Library Default Style -->
+<link href="/path/to/css/markdown-editor.css" media="all" rel="stylesheet" type="text/css"/>
+<!-- Highlight JS style provided with plugin for code styling -->
+<link href="/path/to/plugins/highlight/highlight.min.css" media="all" rel="stylesheet" type="text/css"/>
+<!-- jQuery JS Library -->
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<!-- Twitter Emojis Plugin (if you need twitter emojis) -->
+<script src="http://twemoji.maxcdn.com/2/twemoji.min.js?11.0"></script>
+<!-- Include DOM purify plugin if you need to purify HTML output (needed only if markdown-it HTML input 
+   is allowed). This must be loaded before markdown-editor.js. -->
+< script src="/path/to/plugins/purify/purify.min.js" type="text/javascript"></script>
+<!-- Markdown IT Main Library -->
+<script src="/path/to/plugins/markdown-it/markdown-it.min.js" type="text/javascript"></script>
+<!-- Markdown IT Definition List Plugin -->
+<script src="/path/to/plugins/markdown-it/markdown-it-deflist.min.js" type="text/javascript"></script>
+<!-- Markdown IT Footnote Plugin -->
+<script src="/path/to/plugins/markdown-it/markdown-it-footnote.min.js" type="text/javascript"></script>
+<!-- Markdown IT Abbreviation Plugin -->
+<script src="/path/to/plugins/markdown-it/markdown-it-abbr.min.js" type="text/javascript"></script>
+<!-- Markdown IT Subscript Plugin -->
+<script src="/path/to/plugins/markdown-it/markdown-it-sub.min.js" type="text/javascript"></script>
+<!-- Markdown IT Superscript Plugin -->
+<script src="/path/to/plugins/markdown-it/markdown-it-sup.min.js" type="text/javascript"></script>
+<!-- Markdown IT Underline/Inserted Text Plugin -->
+<script src="/path/to/plugins/markdown-it/markdown-it-ins.min.js" type="text/javascript"></script>
+<!-- Markdown IT Mark Plugin -->
+<script src="/path/to/plugins/markdown-it/markdown-it-mark.min.js" type="text/javascript"></script>
+<!-- Markdown IT SmartArrows Plugin -->
+<script src="/path/to/plugins/markdown-it/markdown-it-smartarrows.min.js" type="text/javascript"></script>
+<!-- Markdown IT Checkbox Plugin -->
+<script src="/path/to/plugins/markdown-it/markdown-it-checkbox.min.js" type="text/javascript"></script>
+<!-- Markdown IT East Asian Characters Line Break Plugin -->
+<script src="/path/to/plugins/markdown-it/markdown-it-cjk-breaks.min.js" type="text/javascript"></script>
+<!-- Markdown IT Emoji Plugin -->
+<script src="/path/to/plugins/markdown-it/markdown-it-emoji.min.js" type="text/javascript"></script>
+<!-- Highlight JS Main Plugin Library for code styling -->
+<script src="/path/to/plugins/highlight/highlight.min.js" type="text/javascript"></script>
+<!-- Bootstrap 4.x Complete Bundle Library (including Popper) -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js" type="text/javascript"></script>
+<!-- Krajee Markdown Editor Main Library -->
+<script src="/path/to/js/markdown-editor.js" type="text/javascript"></script>
+<!-- Optionally include theme.js script or theme.css for a different theme if needed -->
+<!-- script src="/path/to/themes/fa5/theme.js" type="text/javascript"></script -->
+<!-- Optionally include localization script for your language if needed -->
+<!-- script src="/path/to/js/locales/en.js" type="text/javascript"></script>
 ```
 
 If you noticed, you need to load the `jquery.min.js` and `bootstrap.min.css` in addition to the `markdown-editor.min.css` and `markdown-editor.min.js`. The locale file `locales/<lang>.js` can be optionally included for translating for your language if needed. Most of the other CSS and JS are needed for the functionality provided by the relevant plugins as mentioned in the inline comments.
@@ -150,6 +161,8 @@ Alternatively, you can directly call the plugin options by setting data attribut
 <textarea id="input-id" class="markdown" data-language="ru" data-rows=16>
 </textarea>
 ```
+
+For details, view the [plugin documentation](http://plugins.krajee.com/markdown-editor) and [plugin demos](http://plugins.krajee.com/markdown-editor/demo) at Krajee JQuery plugins. 
 
 ## Translations
 
