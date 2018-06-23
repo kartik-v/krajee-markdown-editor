@@ -83,24 +83,44 @@
             }
             return str.replace(new RegExp("[" + charlist + "]+$"), "");
         },
-        getMarkUp: function (txt, begin, end) {
-            var m = begin.length, n = end.length, str = txt;
+        getMarkUp: function (txt, begin, end, skipSpaces) {
+            var m = begin.length, n = end.length, str = txt, strLtrim = '', strRtrim = '',
+                isTrimmed = false, l, r, t;
+            if (skipSpaces) {
+                str = txt.replace(/^\s+|\s+$/g, '');
+                if (str !== txt) {
+                    isTrimmed = true;
+                }
+            }
             if (m > 0) {
                 str = (str.slice(0, m) === begin) ? str.slice(m) : begin + str;
             }
             if (n > 0) {
                 str = (str.slice(-n) === end) ? str.slice(0, -n) : str + end;
             }
+            if (isTrimmed) {
+                strLtrim = txt.replace(/^\s+/, '');
+                strRtrim = txt.replace(/\s+$/, '');
+                t = txt.length;
+                l = t - strLtrim.length;
+                r = strRtrim.length;
+                if (l > 0) {
+                    str = txt.substring(0, l) + str;
+                }
+                if (r > 0) {
+                    str += txt.substring(r, t);
+                }
+            }
             return str;
         },
-        getBlockMarkUp: function (txt, begin, end) {
+        getBlockMarkUp: function (txt, begin, end, skipSpaces) {
             var str = txt, list = [];
             if (str.indexOf('\n') < 0) {
-                str = $h.getMarkUp(txt, begin, end);
+                str = $h.getMarkUp(txt, begin, end, skipSpaces);
             } else {
                 list = txt.split('\n');
                 $.each(list, function (k, v) {
-                    list[k] = $h.getMarkUp($h.trimRight(v), begin, end + '  ');
+                    list[k] = $h.getMarkUp($h.trimRight(v), begin, end + '  ', skipSpaces);
                 });
                 str = list.join('\n');
             }
@@ -451,13 +471,13 @@
             }
         },
         buttonActions: {
-            bold: {before: '**', after: '**', 'default': '**(bold text here)**'},
-            italic: {before: '_', after: '_', 'default': '_(italic text here)_'},
-            ins: {before: '++', after: '++', 'default': '_(inserted text here)_'},
-            del: {before: '~~', after: '~~', 'default': '_(strikethrough text here)_'},
-            mark: {before: '==', after: '==', 'default': '_(marked text here)_'},
-            sup: {before: '^', after: '^', 'default': '_(superscript text here)_'},
-            sub: {before: '~', after: '~', 'default': '_(subscript text here)_'},
+            bold: {before: '**', after: '**', 'default': '**(bold text here)**', skipSpaces: true},
+            italic: {before: '_', after: '_', 'default': '_(italic text here)_', skipSpaces: true},
+            ins: {before: '++', after: '++', 'default': '_(inserted text here)_', skipSpaces: true},
+            del: {before: '~~', after: '~~', 'default': '_(strikethrough text here)_', skipSpaces: true},
+            mark: {before: '==', after: '==', 'default': '_(marked text here)_', skipSpaces: true},
+            sup: {before: '^', after: '^', 'default': '_(superscript text here)_', skipSpaces: true},
+            sub: {before: '~', after: '~', 'default': '_(subscript text here)_', skipSpaces: true},
             paragraph: {before: '\n', after: '\n', 'default': '\n(paragraph text here)\n', inline: true},
             newline: {before: $h.EMPTY, after: '  '},
             heading1: {before: '# ', 'default': '# (heading 1 text here)', inline: true},
@@ -498,8 +518,9 @@
             link: function (str) {
                 return function (link, title) {
                     if (!$h.isEmpty(link)) {
-                        if (link.substring(0, 6) !== 'ftp://' && link.substring(0,
-                            7) !== 'http://' && link.substring(0, 8) !== 'https://') {
+                        if (link.substring(0, 6) !== 'ftp://' &&
+                            link.substring(0, 7) !== 'http://' &&
+                            link.substring(0, 8) !== 'https://') {
                             link = 'http://' + link;
                         }
                         str = '[' + title + '](' + link + ')';
@@ -510,8 +531,9 @@
             image: function (str) {
                 return function (link, title) {
                     if (!$h.isEmpty(link)) {
-                        if (link.substring(0, 6) !== 'ftp://' && link.substring(0,
-                            7) !== 'http://' && link.substring(0, 8) !== 'https://') {
+                        if (link.substring(0, 6) !== 'ftp://' &&
+                            link.substring(0, 7) !== 'http://' &&
+                            link.substring(0, 8) !== 'https://') {
                             link = 'http://' + link;
                         }
                         str = '![' + title + '](' + link + ')';
@@ -1306,11 +1328,11 @@
             }
             return data;
         },
-        getPureHtml: function(src) {
+        getPureHtml: function (src) {
             var self = this;
             return self.purifyHtml && window.DOMPurify ? window.DOMPurify.sanitize(src) : src;
         },
-        getHtml: function(val) {
+        getHtml: function (val) {
             var self = this, $el = self.$element, parser = self.parserMethod;
             if (val === undefined) {
                 val = $el.val();
@@ -1418,7 +1440,7 @@
         },
         process: function (key) {
             var self = this, $el = self.$element, str = self.getSelected(), len = str.length, out, def, bef, aft,
-                action = self.getConfig('buttonActions', key);
+                action = self.getConfig('buttonActions', key), skipSp;
             if (key !== 'mode' && key.substring(0, 6) !== 'export') {
                 $el.focus();
             }
@@ -1440,7 +1462,8 @@
                 bef = $h.isEmpty(action.before) ? $h.EMPTY : action.before;
                 aft = $h.isEmpty(action.after) ? $h.EMPTY : action.after;
                 def = action['default'];
-                out = action.inline ? $h.getMarkUp(str, bef, aft) : $h.getBlockMarkUp(str, bef, aft);
+                skipSp = action.skipSpaces;
+                out = action.inline ? $h.getMarkUp(str, bef, aft, skipSp) : $h.getBlockMarkUp(str, bef, aft, skipSp);
                 return def ? (len > 0 ? out : def) : out;
             }
             return $h.EMPTY;
