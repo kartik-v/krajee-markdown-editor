@@ -9,6 +9,8 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 $.fn.markdownEditorLocales['en-US'] = $.fn.markdownEditorLocales['en-GB'] = $.fn.markdownEditorLocales.en = {
+    ajaxParserErrorMsg: 'Error parsing markdown text. Please try again later.',
+    ajaxParserProgressMsg: 'Parsing markdown text ...',
     noDataMsg: 'No valid source data found!',
     exportFileName: 'export',
     buttonTitles: {
@@ -108,12 +110,8 @@ $.fn.markdownEditorLocales['en-US'] = $.fn.markdownEditorLocales['en-GB'] = $.fn
     previewErrorTitle: 'Preview Error',
     previewModeTitle: 'Preview Mode',
     noPreviewUrlMsg: 'Markdown preview processor unavailable. Please contact the system administrator.',
-    emptyPreviewMsg: 'No formatted content available for preview.',
-    errorPreviewMsg: 'Error generating preview. Please try again later.',
     previewProgressMsg: 'Generating preview ...',
     noExportUrlMsg: 'Export processor unavailable. Please contact the system administrator.',
-    exportProgressMsg: 'Generating export file for download ...',
-    exportErrorMsg: 'Error generating export. Please try again later.',
     emojiSearchHint: 'Search emojis ...',
     loadingMsg: 'Loading ...'
 };

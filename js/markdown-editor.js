@@ -1304,11 +1304,7 @@
         },
         hasInvalidConfig: function (type) {
             var self = this, urlProp = self[type + 'Url'], methodProp = self[type + 'Method'],
-                noUrl = $h.isEmpty(urlProp),
-                noMethod = $h.isEmpty(methodProp), methodType = typeof methodProp;
-            if (type === 'export' && self.enableExportDataUri) {
-                return false;
-            }
+                noUrl = $h.isEmpty(urlProp), noMethod = $h.isEmpty(methodProp), methodType = typeof methodProp;
             return (noUrl && noMethod || !noMethod && methodType !== "function" && methodType !== "object");
         },
         parseOutput: function (data) {
@@ -1540,10 +1536,8 @@
                 self.download('exportText', source);
                 return;
             }
-            if ($h.isEmpty(self.parserUrl)) {
-                out = $h.parseHtml(self.generatePreview(source, true));
-                self.download('exportHtml', self.getHtmlContent(out));
-            }
+            out = $h.parseHtml(self.generatePreview(source, true));
+            self.download('exportHtml', self.getHtmlContent(out));
         },
         renderIcon: function (key) {
             var self = this;
@@ -1830,11 +1824,11 @@
             }
         },
         _ajaxSubmit: function (val) {
-            var self = this, errorMsg = self.exportErrorMsg, fnBefore, fnSuccess, fnError, settings,
+            var self = this, errorMsg = self.ajaxParserErrorMsg, fnBefore, fnSuccess, fnError, settings,
                 tHtm = self.getTitle('exportHtml'), pureHtml;
             fnBefore = function (jQXhr) {
                 if (self.raise('beforeExportHtm', [jQXhr])) {
-                    self.showPopup(tHtm, self.getProgress(self.exportProgressMsg));
+                    self.showPopup(tHtm, self.getProgress(self.ajaxParserProgressMsg));
                 }
             };
             fnSuccess = function (data, textStatus, jQXhr) {
@@ -1906,7 +1900,6 @@
         bsVersion: $h.BS4_VER, // default (uses bs4 version)
         defaultMode: 'editor',
         enableUndoRedo: true,
-        enableExportDataUri: true,
         enableSplitMode: true,
         enableLivePreview: undefined,
         enableScrollSync: true,
@@ -1982,6 +1975,8 @@
     };
 
     $.fn.markdownEditorLocales.en = {
+        ajaxParserErrorMsg: 'Error parsing markdown text. Please try again later.',
+        ajaxParserProgressMsg: 'Parsing markdown text ...',
         noDataMsg: 'No valid source data found!',
         exportFileName: 'export',
         buttonTitles: {},
@@ -1993,13 +1988,9 @@
         dialogSubmitText: 'Submit',
         previewErrorTitle: 'Preview Error',
         previewModeTitle: 'Preview Mode',
-        noPreviewUrlMsg: 'Markdown preview processor unavailable. Please contact the system administrator.',
-        emptyPreviewMsg: 'No formatted content available for preview.',
-        errorPreviewMsg: 'Error generating preview. Please try again later.',
         previewProgressMsg: 'Generating preview ...',
+        noPreviewUrlMsg: 'Markdown preview processor unavailable. Please contact the system administrator.',
         noExportUrlMsg: 'Export processor unavailable. Please contact the system administrator.',
-        exportProgressMsg: 'Generating export file for download ...',
-        exportErrorMsg: 'Error generating export. Please try again later.',
         emojiSearchHint: 'Search emojis ...',
         loadingMsg: 'Loading ...'
     };

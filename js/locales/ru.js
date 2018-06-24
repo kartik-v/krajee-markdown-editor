@@ -9,6 +9,8 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 $.fn.markdownEditorLocales.ru = {
+    ajaxParserErrorMsg: 'Ошибка при анализе текста markdown. Пожалуйста, повторите попытку позже.',
+    ajaxParserProgressMsg: 'Разбор текста markdown ...',
     noDataMsg: 'Не найдено достоверных исходных данных!',
     exportFileName: 'экспорт',
     buttonTitles: {
@@ -89,7 +91,7 @@ $.fn.markdownEditorLocales.ru = {
     },
     templates: {
         exportHeader: '> - - -\n' +
-        '> Отказ от экспорта\n' +
+        '> Экспорт Markdown\n' +
         '> ==============\n' +
         '> *Сгенерировано {TODAY} на {CREDITS}*\n' +
         '> - - -\n\n',
@@ -108,12 +110,8 @@ $.fn.markdownEditorLocales.ru = {
     previewErrorTitle: 'Ошибка просмотра',
     previewModeTitle: 'Режим предварительного просмотра',
     noPreviewUrlMsg: 'Процессор предварительного просмотра Markdown недоступен. Пожалуйста свяжитесь с системным администратором.',
-    emptyPreviewMsg: 'Нет форматированного содержимого, доступного для предварительного просмотра',
-    errorPreviewMsg: 'Ошибка генерации предварительного просмотра. Пожалуйста, повторите попытку позже.',
     previewProgressMsg: 'Генерирование предварительного просмотра ...',
     noExportUrlMsg: 'Экспортный процессор недоступен. Пожалуйста свяжитесь с системным администратором.',
-    exportProgressMsg: 'Создание файла экспорта для загрузки ...',
-    exportErrorMsg: 'Ошибка при создании экспорта. Пожалуйста, повторите попытку позже.',
     emojiSearchHint: 'Поиск emojis ...',
     loadingMsg: 'Загрузка ...'
 };

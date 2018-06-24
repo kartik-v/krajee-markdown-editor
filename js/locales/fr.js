@@ -9,6 +9,8 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 $.fn.markdownEditorLocales.fr = {
+    ajaxParserErrorMsg: "EErreur lors de l'analyse du texte markdown. Veuillez réessayer plus tard.",
+    ajaxParserProgressMsg: "Analyse du texte de Markdown ...",
     noDataMsg: "aucune donnée de source valides trouvé!",
     exportFileName: "exportation",
     buttonTitles: {
@@ -109,12 +111,8 @@ $.fn.markdownEditorLocales.fr = {
     previewErrorTitle: "Aperçu erreur",
     previewModeTitle: "Mode Aperçu",
     noPreviewUrlMsg: "Processeur aperçu Markdown indisponible. S'il vous plaît contactez l'administrateur du système.",
-    emptyPreviewMsg: "Pas de contenu formaté disponible pour aperçu.",
-    errorPreviewMsg: "Erreur générer aperçu. Veuillez réessayer plus tard.",
     previewProgressMsg: "Génération aperçu ...",
     noExportUrlMsg: "Processeur indisponible à l'exportation. S'il vous plaît contactez l'administrateur du système.",
-    exportProgressMsg: "Génération fichier d'exportation pour le téléchargement ...",
-    exportErrorMsg: "Erreur générer exportation. Veuillez réessayer plus tard.",
     emojiSearchHint: "Recherche Emojis ...",
     loadingMsg: "Chargement ..."
 };
