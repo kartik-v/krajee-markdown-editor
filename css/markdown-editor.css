@@ -426,3 +426,8 @@
 .md-dialog-title {
     margin-top: 10px;
 }
+
+.md-blockquote {
+    border-left: 5px solid #eee;
+    padding: 10px 20px;
+}

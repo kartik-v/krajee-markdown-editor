@@ -310,6 +310,9 @@
             exportCssJs: '{EXPORT_PREPEND_CSS_JS}\n' +
             '<style>\n' +
             '  body{margin:20px;padding:20px;border:1px solid #ddd;border-radius:5px;}\n' +
+            '  .md-codeblock{padding:5px 8px;background-color:#f5f5f5;border:1px solid #ddd;border-radius:0}\n' +
+            '  .md-blockquote{border-left:5px solid #eee;padding: 10px 20px}\n' +
+            '  .md-line img{max-width:100%}\n' +
             '</style>',
             exportHeader: '> - - -\n' +
             '> Markdown Export\n' +
@@ -714,6 +717,7 @@
             }
             self.isBs4 = String(self.bsVersion).substring(0, 1) === '4';
             if (self.exportPrependCssJs === undefined) {
+                // noinspection CssUnusedSymbol
                 self.exportPrependCssJs = '<link href="https://maxcdn.bootstrapcdn.com/bootstrap/' +
                     (self.isBs4 ? $h.BS4_VER : $h.BS3_VER) + '/css/bootstrap.min.css" rel="stylesheet">';
             }
@@ -1215,7 +1219,7 @@
         },
         submitExportForm: function (extension, content) {
             var self = this, $form = $h.create('form'), $filetype, $filename, $content,
-                ifrm = self.$element.attr('id') + '-iframe', addlInputs = self.exportAddlData;
+                ifrm = self.$element.attr('id') + '-iframe', addlInputs = self.exportUrlAddlData;
             if (!$('#' + ifrm).length) {
                 $h.create('iframe', {id: ifrm, name: ifrm, css: {display: 'none'}}).appendTo('body');
             }
@@ -1225,7 +1229,7 @@
                 name: 'export_content',
                 css: {display: 'none'}
             }).val(content || self.noDataMsg);
-            $form.attr({target: ifrm, action: self.exportUrl, method: self.exportMethod});
+            $form.attr({target: ifrm, action: self.exportUrl, method: self.exportUrlMethod});
             $form.append($filetype, $filename, $content);
             if (addlInputs) {
                 $form.append(typeof addlInputs === 'function' ? addlInputs() : addlInputs);
@@ -1303,8 +1307,9 @@
             }
         },
         hasInvalidConfig: function (type) {
-            var self = this, urlProp = self[type + 'Url'], methodProp = self[type + 'Method'],
-                noUrl = $h.isEmpty(urlProp), noMethod = $h.isEmpty(methodProp), methodType = typeof methodProp;
+            var self = this, urlProp = self[type + 'Url'], m = type === 'export' ? 'exportUrlMethod' : type + 'Method',
+                methodProp = self[m], noUrl = $h.isEmpty(urlProp), noMethod = $h.isEmpty(methodProp),
+                methodType = typeof methodProp;
             return (noUrl && noMethod || !noMethod && methodType !== "function" && methodType !== "object");
         },
         parseOutput: function (data) {
@@ -1374,7 +1379,7 @@
             return out;
         },
         toggleMode: function (mode) {
-            var self = this, $el = self.$element, val = $el.val(), $cont = self.$container,
+            var self = this, $el = self.$element, val = $el.val(), $cont = self.$container, msg,
                 currMode = self.currentMode || 'modeEditor', $tbl = $cont.find('.md-input-preview'),
                 initPreview = function () {
                     if (currMode !== 'editor') {
@@ -1387,8 +1392,8 @@
                     }, 50);
                 };
             if ($h.isEmpty(val) || self.hasInvalidConfig('parser')) {
-                self.showPopupAlert(self.getTitle('mode'), $h.isEmpty(val) ? self.noDataMsg : self.noPreviewUrlMsg);
-                return;
+                msg = $h.isEmpty(val) ? self.noDataMsg : self.noPreviewUrlMsg;
+                self.showPopupAlert(self.getTitle('mode'), msg, 'errorToggleMode', [self.$modeInput.val()]);
             }
             $cont.removeClass('md-only-preview');
             $tbl.removeClass('md-editor-mode md-preview-mode md-split-mode');
@@ -1492,29 +1497,36 @@
             head = head ? '<h4>' + (hideIcon ? '' : self.renderIcon('alertMsg')) + head + '</h4>' : '';
             return '<div class="' + self.alertMsgCss + ' md-alert">' + head + msg + '</div>';
         },
-        showPopupAlert: function (heading, content) {
+        showPopupAlert: function (heading, content, event, params) {
             var self = this, $body = self.$dialog.find('.modal-body'), time = self.alertFadeDuration,
                 evS = $events.modalShown, evH = $events.modalHidden;
-            self.showPopup('', self.getAlert(content, heading, true));
-            self.$dialogHeader.hide();
-            self.$dialogFooter.hide();
-            self.$dialogClose.hide();
-            $body.addClass('md-zero-pad');
-            self.$dialog.off(evS).on(evS, function () {
-                if (time) {
-                    setTimeout(function () {
+            if (self.showAlerts) {
+                self.showPopup('', self.getAlert(content, heading, true));
+                self.$dialogHeader.hide();
+                self.$dialogFooter.hide();
+                self.$dialogClose.hide();
+                $body.addClass('md-zero-pad');
+                self.$dialog.off(evS).on(evS, function () {
+                    if (time) {
+                        setTimeout(function () {
+                            self.$dialog.modal('hide').off(evS);
+                        }, time);
+                    } else {
                         self.$dialog.modal('hide').off(evS);
-                    }, time);
-                } else {
-                    self.$dialog.modal('hide').off(evS);
-                }
-            });
-            self.$dialog.off(evH).on(evH, function () {
-                $body.removeClass('md-zero-pad');
-                self.$dialog.off(evS).off(evH);
-                self.$element.focus();
-            });
-
+                    }
+                });
+                self.$dialog.off(evH).on(evH, function () {
+                    $body.removeClass('md-zero-pad');
+                    self.$dialog.off(evS).off(evH);
+                    self.$element.focus();
+                });
+            }
+            if (event) {
+                params = params || [];
+                params.push(heading);
+                params.push(content);
+                self.raise(event, params);
+            }
         },
         getHtmlContent: function (data) {
             var self = this, preCss = self.exportPrependCssJs;
@@ -1524,10 +1536,12 @@
         },
         exportData: function (key) {
             var self = this, source = self.$element.val(), tTxt = self.getTitle('exportText'), out,
-                tHtm = self.getTitle('exportHtml'), noDataMsg = self.noDataMsg,
+                tHtm = self.getTitle('exportHtml'), noDataMsg = self.noDataMsg, typ, msg,
                 noUrlMsg = self.noExportUrlMsg, today = self.today || new Date();
-            if ($h.isEmpty(source) || self.hasInvalidConfig('parser') || self.hasInvalidConfig('export')) {
-                self.showPopupAlert(key === 'exportText' ? tTxt : tHtm, $h.isEmpty(source) ? noDataMsg : noUrlMsg);
+            if ($h.isEmpty(source) || (!$h.isEmpty(self.exportUrl) && self.hasInvalidConfig('export'))) {
+                typ = key === 'exportText' ? tTxt : tHtm;
+                msg = $h.isEmpty(source) ? noDataMsg : noUrlMsg;
+                self.showPopupAlert(typ, msg, 'errorExport', [key]);
                 return;
             }
             source = self.getLayout('exportHeader').replace('{TODAY}', today)
@@ -1832,20 +1846,17 @@
                 }
             };
             fnSuccess = function (data, textStatus, jQXhr) {
-                if (self.raise('successExportHtm', [data, textStatus, jQXhr])) {
-                    self.$dialog.modal('hide');
-                    if (data) {
-                        pureHtml = self.getPureHtml(data);
-                        self.download('exportHtml', self.getHtmlContent(pureHtml));
-                    } else {
-                        self.showPopupAlert(tHtm, errorMsg);
-                    }
+                self.$dialog.modal('hide');
+                if (data) {
+                    pureHtml = self.getPureHtml(data);
+                    self.download('exportHtml', self.getHtmlContent(pureHtml));
+                    self.raise('successExportHtm', [data, textStatus, jQXhr]);
+                } else {
+                    self.showPopupAlert(tHtm, errorMsg, 'errorExportHtm', [data, textStatus, jQXhr]);
                 }
             };
             fnError = function (jqXHR, textStatus, errorThrown) {
-                if (self.raise('errorExportHtm', [jqXHR, textStatus, errorThrown])) {
-                    self.showPopupAlert(tHtm, errorMsg);
-                }
+                self.showPopupAlert(tHtm, errorMsg, 'exceptionExportHtm', [jqXHR, textStatus, errorThrown]);
             };
             self._ajaxSettings = $.extend(true, {}, self.ajaxSettings);
             self._mergeAjaxCallback('beforeSend', fnBefore);
@@ -1907,6 +1918,7 @@
         enableEmojies: true,
         useTwemoji: false,
         purifyHtml: true, // requires purify.js plugin
+        showAlerts: true,
         toolbarHeaderL: undefined,
         toolbarHeaderR: undefined,
         toolbarFooterL: undefined,
@@ -1948,8 +1960,8 @@
             markdownitCjkBreaks: {}
         },
         exportUrl: $h.EMPTY,
-        exportMethod: 'post',
-        exportAddlData: $h.EMPTY,
+        exportUrlMethod: 'post',
+        exportUrlAddlData: $h.EMPTY,
         today: $h.EMPTY,
         alertFadeDuration: 2000,
         outputParseTimeout: 1800000,
@@ -1969,6 +1981,7 @@
         postProcess: {
             '<table>': '<table class="table table-bordered table-striped">',
             '<pre>': '<pre class="md-codeblock">',
+            '<blockquote>': '<blockquote class="blockquote md-blockquote">',
             '<input type="checkbox"': '<input type="checkbox" class="form-check-input"',
             '<label for="cbx': '<label class="form-check-label" for="cbx'
         }
