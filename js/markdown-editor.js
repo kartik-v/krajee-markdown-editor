@@ -821,6 +821,7 @@
             self.handleEvent($preview, eFocus, 'focus');
             self.handleEvent($el, eBlur, 'blur');
             self.handleEvent($preview, eBlur, 'blur');
+            self.handleEvent($(document), eKeydown, 'escapeFullScreen');
             self.handleEvent($(window), eResize, 'resizeWindow');
             if ($form.length) {
                 self.handleEvent($form, eReset, 'reset');
@@ -1200,6 +1201,7 @@
             }
             $el.off(ns);
             $(window).off(ns);
+            $(document).off(ns);
             $cont.before($el).remove();
         },
         getLayout: function (template) {
@@ -1430,6 +1432,12 @@
                 $el.focus();
             } else {
                 $preview.focus();
+            }
+        },
+        escapeFullScreen: function(e) {
+            var self = this;
+            if (self.enableEscKeyFullScreen && self.$container.hasClass('md-fullscreen-overlay') && e.keyCode == 27) {
+                self.toggleFullScreen();
             }
         },
         resizeFullScreen: function () {
@@ -1919,6 +1927,7 @@
         useTwemoji: false,
         purifyHtml: true, // requires purify.js plugin
         showAlerts: true,
+        enableEscKeyFullScreen: true,
         toolbarHeaderL: undefined,
         toolbarHeaderR: undefined,
         toolbarFooterL: undefined,
