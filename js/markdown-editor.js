@@ -1873,7 +1873,6 @@
             settings = $.extend(true, {}, {
                 type: 'POST',
                 url: self.parserUrl,
-                dataType: "json",
                 data: {source: val}
             }, self._ajaxSettings);
             $.ajax(settings);
