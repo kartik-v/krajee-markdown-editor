@@ -1652,26 +1652,27 @@
             }
             keys = '<div class="md-hint-access-keys"><ul>';
             $.each(self.getValidButtons(), function (idx, btn) {
-                var key;
-                css = self.getConfig('buttonCss', btn) || self.defaultButtonCss;
-                if (btn === 'heading') {
-                    for (i = 1; i <= 6; i++) {
-                        icon = self.renderIcon('heading') + i;
-                        key = self.getConfig('buttonAccessKeys', btn + i);
-                        ttl = self.getConfig('buttonTitles', 'heading') + ' ' + i;
-                        keys += '<li title="' + ttl + '"><p>' + '<span class="' + css + '">' + icon +
-                            '</span></p><p><kbd>ALT</kbd> &ndash; <kbd>' + key + '</kbd></p></li>';
-                    }
-                } else {
-                    if (btn.substring(0, 6) !== 'export' && btn.substring(0, 4) !== 'mode') {
-                        key = self.getConfig('buttonAccessKeys', btn);
-                        icon = self.renderIcon(btn);
-                        ttl = self.getConfig('buttonTitles', btn);
-                        keys += '<li title="' + ttl + '"><p>' + '<span class="' + css + '">' + icon +
-                            '</span></p><p><kbd>ALT</kbd> &ndash; <kbd>' + key + '</kbd></p></li>';
+                var key, isHidden = btn === 'emoji' && !self.enableEmojies || self.hiddenActions.indexOf(btn) > -1;
+                if (!isHidden) {
+                    css = self.getConfig('buttonCss', btn) || self.defaultButtonCss;
+                    if (btn === 'heading') {
+                        for (i = 1; i <= 6; i++) {
+                            icon = self.renderIcon('heading') + i;
+                            key = self.getConfig('buttonAccessKeys', btn + i);
+                            ttl = self.getConfig('buttonTitles', 'heading') + ' ' + i;
+                            keys += '<li title="' + ttl + '"><p>' + '<span class="' + css + '">' + icon +
+                                '</span></p><p><kbd>ALT</kbd> &ndash; <kbd>' + key + '</kbd></p></li>';
+                        }
+                    } else {
+                        if (btn.substring(0, 6) !== 'export' && btn.substring(0, 4) !== 'mode') {
+                            key = self.getConfig('buttonAccessKeys', btn);
+                            icon = self.renderIcon(btn);
+                            ttl = self.getConfig('buttonTitles', btn);
+                            keys += '<li title="' + ttl + '"><p>' + '<span class="' + css + '">' + icon +
+                                '</span></p><p><kbd>ALT</kbd> &ndash; <kbd>' + key + '</kbd></p></li>';
+                        }
                     }
                 }
-
             });
             keys += '</ul></div>';
             return txt.replace(tag, keys);
@@ -1777,8 +1778,9 @@
             var self = this, $btn, $div, icon, title, label, t, i, out, btnCss, icon = self.getConfig('icons', key),
                 css = 'md-btn-' + key, dropCss, defDropCss = self.getConfig('dropdownCss', key),
                 isValid = key === 'mode' || icon !== undefined || self.getConfig('buttonActions', key) !== undefined,
+                isHidden = key === 'emoji' && !self.enableEmojies || self.hiddenActions.indexOf(key) > -1,
                 tag = self.isBs4 && key !== 'emoji' ? 'div' : 'ul';
-            if (!isValid || (!self.enableUndoRedo && (key === 'undo' || key === 'redo' || key === 'editor'))) {
+            if (!isValid || isHidden || (!self.enableUndoRedo && (key === 'undo' || key === 'redo' || key === 'editor'))) {
                 return $h.EMPTY;
             }
             btnCss = self.getConfig('buttonCss', key) || self.defaultButtonCss;
@@ -1932,6 +1934,7 @@
         toolbarFooterL: undefined,
         toolbarFooterR: undefined,
         exportPrependCssJs: undefined,
+        hiddenActions: [],
         dropUp: {
             export: true
         },
