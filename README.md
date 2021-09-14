@@ -13,7 +13,6 @@
 
 <div align="center">
 
-[![Financial Contributors on Open Collective](https://opencollective.com/krajee-markdown-editor/all/badge.svg?label=financial+contributors)](https://opencollective.com/krajee-markdown-editor)
 [![Bower version](https://badge.fury.io/bo/krajee-markdown-editor.svg)](http://badge.fury.io/bo/krajee-markdown-editor)
 [![Latest Stable Version](https://poser.pugx.org/kartik-v/krajee-markdown-editor/v/stable)](https://packagist.org/packages/kartik-v/krajee-markdown-editor)
 [![License](https://poser.pugx.org/kartik-v/krajee-markdown-editor/license)](https://packagist.org/packages/kartik-v/krajee-markdown-editor)
