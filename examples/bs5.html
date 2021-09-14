@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Krajee JQuery Plugins - &copy; Kartik</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
+    <link href="../css/markdown-editor.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="../plugins/highlight/highlight.min.css" media="all" rel="stylesheet" type="text/css"/>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="../plugins/markdown-it/markdown-it.min.js" type="text/javascript"></script>
+    <script src="../plugins/markdown-it/markdown-it-deflist.min.js" type="text/javascript"></script>
+    <script src="../plugins/markdown-it/markdown-it-footnote.min.js" type="text/javascript"></script>
+    <script src="../plugins/markdown-it/markdown-it-abbr.min.js" type="text/javascript"></script>
+    <script src="../plugins/markdown-it/markdown-it-sub.min.js" type="text/javascript"></script>
+    <script src="../plugins/markdown-it/markdown-it-sup.min.js" type="text/javascript"></script>
+    <script src="../plugins/markdown-it/markdown-it-ins.min.js" type="text/javascript"></script>
+    <script src="../plugins/markdown-it/markdown-it-mark.min.js" type="text/javascript"></script>
+    <script src="../plugins/markdown-it/markdown-it-smartarrows.min.js" type="text/javascript"></script>
+    <script src="../plugins/markdown-it/markdown-it-checkbox.min.js" type="text/javascript"></script>
+    <script src="../plugins/markdown-it/markdown-it-cjk-breaks.min.js" type="text/javascript"></script>
+    <script src="../plugins/markdown-it/markdown-it-emoji.min.js" type="text/javascript"></script>
+    <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js"></script>
+    <!-- script src="../plugins/marked/marked.min.js" type="text/javascript"></script -->
+    <!-- script src="../js/plugins/js-markdown-extra.js" type="text/javascript"></script -->
+    <script src="../plugins/highlight/highlight.min.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" type="text/javascript"></script>
+    <script src="../js/markdown-editor.js" type="text/javascript"></script>
+
+</head>
+<body style="margin:80px">
+<h1>Bootstrap Markdown Editor (BS5 Version) - &copy; Kartik</h1>
+<hr style="height:4px">
+<form>
+<textarea id="kv-01" rows="15" class="form-control markdown" required title="Krajee Markdown Editor" data-use-twemoji="true">
+## Basic Typography
+
+Paragraphs are ++separated++ by a blank line.
+
+2nd paragraph. *Italic*, **bold**, `monospace`. Itemized lists
+look like:
+
+  * this one
+  * that one
+  * the other one
+
+Note that --- not considering the asterisk --- the actual text
+content starts at 3-columns in.
+
+## Headings
+
+# h1 Heading 8-)
+## h2 Heading
+### h3 Heading
+#### h4 Heading
+##### h5 Heading
+###### h6 Heading
+
+### Emphasis
+
+**This is bold text**
+
+__This is bold text__
+
+*This is italic text*
+
+_This is italic text_
+
+~~Strikethrough~~
+
+
+### Subscript & Superscript
+
+Supported via the `markdown-it-sub` and `markdown-it-sup` plugins.
+
+- H~2~O
+- 19^th^
+
+### Inserted / Underlined Text
+
+Supported via the `markdown-it-ins` plugin.
+
+++Inserted text++
+
+### Marked Text
+
+Supported via the `markdown-it-mark` plugin.
+
+==Marked text==
+
+### Footnotes
+
+Supported via the `markdown-it-footnote` plugin.
+
+Footnote 1 link[^first].
+
+Footnote 2 link[^second].
+
+Inline footnote^[Text of inline footnote] definition.
+
+Duplicated footnote reference[^second].
+
+[^first]: Footnote text **can have markup**
+
+    and multiple paragraphs.
+
+[^second]: Footnote 2 text (with duplicated reference).
+
+### Blockquotes
+
+> Block quotes are
+> written like so.
+>
+> They can span multiple paragraphs,
+> if you like.
+>
+> > They can be nested as well
+>> ...by using additional greater-than signs right next to each other...
+> > > ...or with spaces between arrows.
+
+### Typographic replacements
+
+With the markdown-it parser, the typographer option allows you to auto-format commonly used symbols. For example:
+
+(c) (C) (r) (R) (tm) (TM) (p) (P) +-
+
+ellip.. ellipsis... (ellipsis extra)..... (ellipsis query)?..... (ellipsis exclamation)!....
+
+!!!!!! ???? ,,  -- ---
+
+"Smartypants, double quotes" and 'single quotes'.
+
+Other smartypants configurations:
+
+ - Use 3 dashes `---` for an em-dash. (e.g. Note --- Its a cool day)
+ - Use 2 dashes `--` for an en-dash or ranges (e.g. "It's all in chapters 12--14").
+ - Three dots `...` will be converted to an ellipsis. (e.g. He goes on and on ...)
+ - Straight quotes ( `"` and `'` ) will be converted to "curly double" and 'curly single'
+
+
+## Horizontal Rules
+
+___
+
+---
+
+***
+  
+## Lists
+
+### Unordered List
+
++ Create a list by starting a line with `+`, `-`, or `*`
++ Sub-lists are made by indenting 2 spaces:
+  - Marker character change forces new list start:
+    * Ac tristique libero volutpat at
+    + Facilisis in pretium nisl aliquet
+    - Nulla volutpat aliquam velit
++ Very easy!
+    
+### Ordered List
+
+Here is a numbered list:
+
+1. first item
+2. second item
+3. third item
+
+Note again how the actual text starts at 3 columns in (3 characters
+from the left side).
+
+1. You can use sequential numbers...
+1. ...or keep all the numbers as `1.`
+
+Start numbering with offset:
+
+57. foo
+1. bar
+
+### Nested List
+
+Now a nested list:
+
+1. First, get these ingredients:
+   - carrots
+   - celery
+   - lentils
+
+2. Boil some water.
+
+3. Dump everything in the pot and follow
+   this algorithm:
+   - find wooden spoon
+   - manage pot
+      - uncover pot
+      - stir
+      - cover pot
+      - balance wooden spoon precariously on pot handle
+   - wait 10 minutes
+   - goto first step (or shut off burner when done)
+
+* Do not bump wooden spoon or it will fall.
+
+Notice again how text always lines up on at 3-space indents (including
+that last line which continues item 3 above).
+
+### Definition Lists
+
+Apple
+   : Pomaceous fruit of plants of the genus Malus in
+   the family Rosaceae.
+
+Orange
+   : The fruit of an evergreen tree of the genus Citrus.
+
+Tomatoes
+   : There's no "e" in tomato.
+
+You can put blank lines in between each of the above definition list lines to spread things
+out more. Also you can lazy continue lists, add inline markup, and also include paragraphs
+within each definition.
+
+Apple
+
+:   Pomaceous fruit of plants of the genus Malus in
+the family Rosaceae (note the lazy continuation).
+
+Orange
+
+:   The fruit of an evergreen tree of the **genus Citrus** (note the inline markup).
+
+Tomatoes
+
+: There's no "e" in tomato.
+
+    { some code, part of Definition 'Tomatoes' }
+
+    Third paragraph of definition 'Tomatoes'.
+
+Here is an example of a _compact definition list style_
+
+Term 1
+  ~ Definition 1
+
+Term 2
+  ~ Definition 2a
+  ~ Definition 2b
+
+## Code
+
+This is an `inline code`.
+
+Here's an indented code block sample:
+
+    # Let me re-iterate ...
+    for i in 1 .. 10 { do-something(i) }
+
+As you probably guessed, indented 4 spaces. By the way, instead of
+indenting the block, you can use delimited blocks, if you like:
+
+~~~
+define foobar() {
+    print "Welcome to flavor country!";
+}
+~~~
+
+(which makes copying & pasting easier). You can optionally mark the
+delimited block for syntax highlighting with any code pretty CSS framework.  
+
+PYTHON CODE EXAMPLE:
+
+~~~python
+import time
+# Quick, count to ten!
+for i in range(10):
+    # (but not *too* quick)
+    time.sleep(0.5)
+    print i
+~~~
+
+JAVASCRIPT EXAMPLE
+
+``` js
+var foo = function (bar) {
+  return bar++;
+};
+
+console.log(foo(5));
+```
+
+PHP CODE EXAMPLE:
+
+~~~php
+namespace site\controllers;
+
+use yii\web\Controller;
+
+class BaseController extends Controller {
+    const HAPPY = 1;
+    const SAD = 2;
+
+    public function actionGood($param) {
+        if ($param === self::HAPPY) {
+            echo 'I am happy.';
+        } else {
+            echo 'I am sad.';
+        }
+    }
+}
+~~~
+
+## Links
+
+[link text](http://dev.nodeca.com)
+
+[link with title](http://nodeca.github.io/pica/demo/ "title text!")
+
+Autoconverted link https://github.com/nodeca/pica (enable linkify to see)
+
+Here's a link to [a website](http://foo.bar). Here's a link to a [local
+doc](local-doc.html). Here's a footnote [^1].
+
+[^1]: Footnote link text goes here.
+
+## Images
+
+![Minion](https://octodex.github.com/images/minion.png)
+![Stormtroopocat](https://octodex.github.com/images/stormtroopocat.jpg "The Stormtroopocat")
+
+Like links, Images also have a footnote style syntax
+
+![Alt text][id]
+
+With a reference later in the document defining the URL location:
+
+[id]: https://octodex.github.com/images/dojocat.jpg  "The Dojocat"
+
+## Tables
+
+Tables can look like this:
+
+size | material     | color
+---- | ------------ | ------------
+9    | leather      | brown
+10   | hemp canvas  | natural
+11   | glass        | transparent
+
+You can specify alignment for each column by adding colons to separator lines. 
+A colon at the left of the separator line will make the column left-aligned; a 
+colon on the right of the line will make the column right-aligned; colons at both 
+side means the column is center-aligned.
+
+| Item      | Description | Value|
+|:--------- |:-----------:|-----:|
+| Computer  | Desktop PC  |$1600 |
+| Phone     | iPhone 5s   |  $12 |
+| Pipe      | Steel Pipe  |   $1 |
+
+You can apply span-level formatting to the content of each cell using regular Markdown syntax:
+
+| Function name | Description                    |
+| ------------- | ------------------------------ |
+| `help()`      | Display the help window.       |
+| `destroy()`   | **Destroy your computer!**     |
+
+## Other
+
+### Abbreviations
+
+Supported via the `markdown-it-abbr` plugin. Create an abbreviation definition like this:
+
+~~~
+*[HTML]: Hyper Text Markup Language
+*[W3C]:  World Wide Web Consortium
+~~~
+
+*[HTML]: Hyper Text Markup Language
+*[W3C]:  World Wide Web Consortium
+
+then, elsewhere in the document, write text such as:
+
+The HTML specification is maintained by the W3C.
+
+, and watch how the instance of those words in the text are highlighted.
+
+Note that it converts "HTML", but keep intact partial entries like "xxxHTMLyyy" and so on.
+
+### Emojies
+
+Note that emojies need to be supported by the markdown parser. This is enabled in this package
+via the `markdown-it-emoji` plugin.
+
+> Classic markup: :wink: :smile: :cry: :laughing: :yum: :boy: :girl:
+>
+> Shortcuts (emoticons): :-) o:) :,( 8-) ;) ,:(
+
+When using the default parser (markdown-it), you can set **useTwemoji** to **true** to change output using
+[Twitter Emojis](https://github.com/twitter/twemoji).
+You can also [check how to change output](https://github.com/markdown-it/markdown-it-emoji#change-output)
+with twemoji.
+
+### Smart Arrows
+
+Supported via the `markdown-it-smartarrows` plugin. You can add "smart arrows" to markdown-it's typographic
+enhancements:
+
+|Code      |  Output  |
+|:--------:|:--------:|
+| `-->`    | -->      |
+| `<--`    | <--      |
+| `<-->`   | <-->     |
+| `<==`    | <==      |
+| `==>`    | ==>      |
+| `<==>`   | <==>     |
+
+### Checkboxes
+
+Supported via the `markdown-it-checkbox` plugin. This allows to create checkboxes for tasklists as shown below.
+
+- [x] Activity One
+- [x] Activity Two
+- [x] Activity Three
+- [ ] Activity Four
+- [ ] Activity Five
+- [ ] Activity Six
+
+---
+
+##### Done.</textarea>
+    <hr style="height:4px">
+    <div class="row">
+        <div class="col-sm-4">
+        </div>
+        <div class="col-sm-2">
+            <button type="submit" class="btn btn-block btn-primary"><i class="fa fa-check"></i> Submit</button>
+        </div>
+        <div class="col-sm-2">
+            <button type="reset" class="btn btn-block btn-outline-secondary"><i class="fa fa-ban"></i> Reset</button>
+        </div>
+        <div class="col-sm-4">
+        </div>
+    </div>
+</form>
+</body>
+</html>

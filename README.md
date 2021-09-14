@@ -6,17 +6,21 @@
     krajee-markdown-editor
     <hr>
     <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DTP3NZQ6G2AYU"
-       title="Donate via Paypal" target="_blank">
-        <img src="http://kartik-v.github.io/bootstrap-fileinput-samples/samples/donate.png" alt="Donate"/>
-    </a>
+       title="Donate via Paypal" target="_blank"><img src="https://kartik-v.github.io/bootstrap-fileinput-samples/samples/donate.png" height="60" alt="Donate"/></a>
+    &nbsp; &nbsp; &nbsp;
+    <a href="https://www.buymeacoffee.com/kartikv" title="Buy me a coffee" ><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" height="60" alt="kartikv" /></a>
 </h1>
 
+<div align="center">
+
+[![Financial Contributors on Open Collective](https://opencollective.com/krajee-markdown-editor/all/badge.svg?label=financial+contributors)](https://opencollective.com/krajee-markdown-editor)
 [![Bower version](https://badge.fury.io/bo/krajee-markdown-editor.svg)](http://badge.fury.io/bo/krajee-markdown-editor)
 [![Latest Stable Version](https://poser.pugx.org/kartik-v/krajee-markdown-editor/v/stable)](https://packagist.org/packages/kartik-v/krajee-markdown-editor)
 [![License](https://poser.pugx.org/kartik-v/krajee-markdown-editor/license)](https://packagist.org/packages/kartik-v/krajee-markdown-editor)
 [![Packagist Downloads](https://poser.pugx.org/kartik-v/krajee-markdown-editor/downloads)](https://packagist.org/packages/kartik-v/krajee-markdown-editor)
 [![Monthly Downloads](https://poser.pugx.org/kartik-v/krajee-markdown-editor/d/monthly)](https://packagist.org/packages/kartik-v/krajee-markdown-editor)
 
+</div>
 A Boostrap styled markdown editor that converts a native HTML textarea to an advanced markdown editor. The editor offers live preview, export, full screen mode, and more features. The editor includes inbuilt support for markdown parsing using [markdown-it JS based parser](https://markdown-it.github.io/). However, the editor can support any markdown parser via javascript library / method or even a server based parser via an ajax action. Other markdown parsers are configurable (both as a server call OR a local JS method/library). In addition, the plugin allows custom button actions and properties to be setup.
 
 ## Features
@@ -57,7 +61,7 @@ View the [plugin documentation](http://plugins.krajee.com/markdown-editor) and [
 
 ## Pre-requisites  
 
-1. [Bootstrap 4.x](http://getbootstrap.com/) or [Bootstrap 3.x](https://getbootstrap.com/docs/3.3/)
+1. [Bootstrap (5.x or 4.x or 3.x)](http://getbootstrap.com/)
 2. [Font Awesome Icons 5.x Free](https://fontawesome.com/icons?d=gallery&m=free) or other icons via your own themes (repo includes FA4 theme for Font Awesome 4.x icons).
 3. Latest [JQuery](http://jquery.com/)
 4. Most modern browsers supporting HTML5, CSS3 & JQuery. 
@@ -94,10 +98,11 @@ You can also manually install the plugin easily to your project. Just download t
 Step 1: Load the following assets in your header. Please read the accompanying comments to understand optional components. 
 
 ```html
-<!-- bootstrap 4.x styling is supported. You can also use the bootstrap css 3.3.x and set the `bsVersion` -->
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet">
+<!-- any of bootstrap 5.x, 4.x, 3.x styling is supported. Plugin auto detects bootstrap version based on 
+    bootstrap JS library loaded on the page. Else set `$.fn.markdownEditorBsVersion` explicitly before initializing the plugin -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" crossorigin="anonymous">
 <!-- Font Awesome 5.x Icon library (check themes to change this) -->
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
 <!-- Krajee Markdown Editor Main Library Default Style -->
 <link href="/path/to/css/markdown-editor.css" media="all" rel="stylesheet" type="text/css"/>
 <!-- Highlight JS style provided with plugin for code styling -->
@@ -105,7 +110,7 @@ Step 1: Load the following assets in your header. Please read the accompanying c
 <!-- jQuery JS Library -->
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <!-- Twitter Emojis Plugin (if you need twitter emojis) -->
-<script src="http://twemoji.maxcdn.com/2/twemoji.min.js?11.0"></script>
+<script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js"></script>
 <!-- Include DOM purify plugin if you need to purify HTML output (needed only if markdown-it HTML input 
    is allowed). This must be loaded before markdown-editor.js. -->
 < script src="/path/to/plugins/purify/purify.min.js" type="text/javascript"></script>
@@ -135,8 +140,8 @@ Step 1: Load the following assets in your header. Please read the accompanying c
 <script src="/path/to/plugins/markdown-it/markdown-it-emoji.min.js" type="text/javascript"></script>
 <!-- Highlight JS Main Plugin Library for code styling -->
 <script src="/path/to/plugins/highlight/highlight.min.js" type="text/javascript"></script>
-<!-- Bootstrap 4.x Complete Bundle Library (including Popper) -->
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js" type="text/javascript"></script>
+<!-- Bootstrap Complete Bundle Library (including Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" type="text/javascript"></script>
 <!-- Krajee Markdown Editor Main Library -->
 <script src="/path/to/js/markdown-editor.js" type="text/javascript"></script>
 <!-- Optionally include theme.js script or theme.css for a different theme if needed -->

@@ -5,7 +5,7 @@
  * Krajee Markdown Editor Default CSS Style
  *
  * Author: Kartik Visweswaran
- * Copyright: 2014 - 2018, Kartik Visweswaran, Krajee.com
+ * Copyright: 2014 - 2021, Kartik Visweswaran, Krajee.com
  *
  * Licensed under the BSD 3-Clause
  * https://github.com/kartik-v/krajee-markdown-editor/blob/master/LICENSE.md
@@ -430,4 +430,22 @@
 .md-blockquote {
     border-left: 5px solid #eee;
     padding: 10px 20px;
+}
+
+.md-dialog-close {
+    float: right;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: 0.5;
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+}
+
+.md-dialog-close:hover {
+    text-decoration: none;
+    opacity: 1;
+    cursor: pointer;
 }

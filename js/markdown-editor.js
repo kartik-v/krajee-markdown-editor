@@ -5,31 +5,30 @@
  * Krajee Markdown Editor Main Plugin Library
  *
  * Author: Kartik Visweswaran
- * Copyright: 2014 - 2018, Kartik Visweswaran, Krajee.com
+ * Copyright: 2014 - 2021, Kartik Visweswaran, Krajee.com
  *
  * Licensed under the BSD 3-Clause
  * https://github.com/kartik-v/krajee-markdown-editor/blob/master/LICENSE.md
  */
 (function (factory) {
-    "use strict";
-    // noinspection JSUnresolvedVariable
+    'use strict';
     if (typeof define === 'function' && define.amd) {
-        // noinspection JSUnresolvedFunction
-        define(['jquery'], factory); // AMD. Register as an anonymous module.
+        define(['jquery', 'window', 'document'], factory);
+    } else if (typeof module === 'object' && typeof module.exports === 'object') {
+        factory(require('jquery'), window, document);
     } else {
-        // noinspection JSUnresolvedVariable
-        if (typeof module === 'object' && module.exports) {
-            // noinspection JSUnresolvedVariable, JSUnresolvedFunction
-            module.exports = factory(require('jquery')); // Node/CommonJS
-        } else {
-            factory(window.jQuery); // Browser globals
-        }
+        factory(window.jQuery, window, document);
     }
-}(function ($) {
+}(function ($, window, document, undefined) {
     "use strict";
 
     $.fn.markdownEditorLocales = {};
     $.fn.markdownEditorThemes = {};
+
+    if (!$.fn.markdownEditorBsVersion) {
+        $.fn.markdownEditorBsVersion = (window.Alert && window.Alert.VERSION) ||
+            (window.bootstrap && window.bootstrap.Alert && bootstrap.Alert.VERSION) || '3.x.x';
+    }
 
     var $h, $events, $defaults, UndoStack, UndoCommand, MarkdownEditor;
 
@@ -39,8 +38,6 @@
     $h = {
         CREDITS: '<a class="text-info" href="http://plugins.krajee.com/markdown-editor">krajee-markdown-editor</a>',
         CREDITS_MD: '[krajee-markdown-editor](http://plugins.krajee.com/markdown-editor)',
-        BS4_VER: '4.1.1',
-        BS3_VER: '3.3.7',
         DEFAULT_TIMEOUT: 250,
         EMPTY: '',
         NAMESPACE: '.markdownEditor',
@@ -55,6 +52,47 @@
         },
         parseHtml: function (data) {
             return data === undefined ? '' : $h.kvUnescape(encodeURIComponent(data));
+        },
+        isBs: function (ver) {
+            var chk = $.trim(($.fn.markdownEditorBsVersion || '') + '');
+            ver = parseInt(ver, 10);
+            if (!chk) {
+                return ver === 4;
+            }
+            return ver === parseInt(chk.charAt(0), 10);
+
+        },
+        bsVer: function () {
+            var chk = $.trim(($.fn.markdownEditorBsVersion || '') + '');
+            return parseInt(chk.charAt(0), 10);
+        },
+        getBsCss: function () {
+            var ver = $h.bsVer(), prefix;
+            prefix = ver === 5 ? '5.1.1' : (ver === 4 ? '4.6.0' : '3.4.1');
+            return 'https://cdn.jsdelivr.net/npm/bootstrap@' + prefix + '/dist/css/bootstrap.min.css';
+        },
+        bsMap: function () {
+            var label = '<label class="{LABEL_CSS}" for="{ID}" title="{LABEL_TITLE}">\n{LABEL}\n',
+                input = '<input id="{ID}" type="radio" value="{VALUE}" name="mdMode" autocomplete="off" accesskey="{KEY}" {CHECK}>';
+            return {
+                'floatRight': {3: 'pull-right', 4: 'float-right', 5: 'float-end'},
+                'tagDialogHeader': {3: 'h4', 4: 'h5'},
+                'layoutDialogHeader': {3: '{CLOSE}\n{TITLE}', 4: '{TITLE}\n{CLOSE}'},
+                'layoutMenuItem': {3: '{CONTENT}', 4: '<li>{CONTENT}</li>'},
+                'layoutBtnRadioGroup': {
+                    3: label + input + '</label>',
+                    4: label + input + '</label>',
+                    5: input.replace('>', ' class="btn-check">') + '\n' + label + '</label>'
+                },
+                'dataPrefix': {3: 'data-', 4: 'data-', 5: 'data-bs-'}
+            };
+        },
+        getBsProp: function (prop) {
+            var attr = $h.bsMap()[prop], ver = $h.bsVer(), out = attr ? attr[ver] : null;
+            if (!attr) {
+                return null;
+            }
+            return out ? out : (ver > 4 ? attr[4] : null);
         },
         create: function (tag, attr) {
             var $el = $(document.createElement(tag));
@@ -224,6 +262,7 @@
     /**
      * Default configurations for templates, icons, buttons, and export
      */
+    var floatRight = $h.getBsProp('floatRight'), dataDismiss = $h.getBsProp('dataPrefix') + 'dismiss';
     $defaults = {
         toolbar: {
             toolbarHeaderL: [
@@ -249,85 +288,85 @@
         },
         templates: {
             main: '<div class="md-editor" tabindex="0">\n' +
-            '  {HEADER}\n' +
-            '  <table class="md-input-preview">\n' +
-            '    <tr>\n' +
-            '      <td class="md-input-cell">{INPUT}</td>\n' +
-            '      <td class="md-preview-cell">{PREVIEW}</td>\n' +
-            '    </tr>' +
-            '  </table>\n' +
-            '  {FOOTER}\n' +
-            '  {DIALOG}\n' +
-            '</div>',
+                '  {HEADER}\n' +
+                '  <table class="md-input-preview">\n' +
+                '    <tr>\n' +
+                '      <td class="md-input-cell">{INPUT}</td>\n' +
+                '      <td class="md-preview-cell">{PREVIEW}</td>\n' +
+                '    </tr>' +
+                '  </table>\n' +
+                '  {FOOTER}\n' +
+                '  {DIALOG}\n' +
+                '</div>',
             header: '<div class="md-header">\n' +
-            '  <div class="md-toolbar-header-r pull-right float-right">\n' +
-            '    {TOOLBAR_HEADER_R}\n' +
-            '  </div>\n' +
-            '  <div class="md-toolbar-header-l">\n' +
-            '    {TOOLBAR_HEADER_L}\n' +
-            '  </div>\n' +
-            '  <div class="clearfix">\n' +
-            '  </div>\n' +
-            '</div>',
+                '  <div class="md-toolbar-header-r ' + floatRight + '">\n' +
+                '    {TOOLBAR_HEADER_R}\n' +
+                '  </div>\n' +
+                '  <div class="md-toolbar-header-l">\n' +
+                '    {TOOLBAR_HEADER_L}\n' +
+                '  </div>\n' +
+                '  <div class="clearfix">\n' +
+                '  </div>\n' +
+                '</div>',
             preview: '<div class="md-preview" tabindex="0">\n</div>',
             footer: '<div class="md-footer">\n' +
-            '  <div class="md-toolbar-footer-r pull-right float-right">\n' +
-            '    {TOOLBAR_FOOTER_R}\n' +
-            '  </div>\n' +
-            '  <div class="md-toolbar-footer-l">\n' +
-            '    {TOOLBAR_FOOTER_L}\n' +
-            '  </div>\n' +
-            '  <div class="clearfix">\n' +
-            '  </div>\n' +
-            '</div>',
+                '  <div class="md-toolbar-footer-r ' + floatRight + '">\n' +
+                '    {TOOLBAR_FOOTER_R}\n' +
+                '  </div>\n' +
+                '  <div class="md-toolbar-footer-l">\n' +
+                '    {TOOLBAR_FOOTER_L}\n' +
+                '  </div>\n' +
+                '  <div class="clearfix">\n' +
+                '  </div>\n' +
+                '</div>',
             dialog: '<div class="md-dialog modal fade" tabindex="-1" role="dialog">\n' +
-            '  <div class="modal-dialog">\n' +
-            '    <div class="modal-content">\n' +
-            '      <div class="modal-header">\n' +
-            '         {HEADER}\n' +
-            '      </div>\n' +
-            '      <div class="modal-body">\n' +
-            '        <input class="md-dialog-input form-control">\n' +
-            '        <input class="md-dialog-title form-control">\n' +
-            '        <div class="md-dialog-content"></div>\n' +
-            '      </div>\n' +
-            '      <div class="modal-footer">\n' +
-            '        <button type="button" class="md-dialog-cancel btn btn-default btn-outline-secondary" data-dismiss="modal">\n' +
-            '          {DIALOG_CANCEL_ICON} {DIALOG_CANCEL_TEXT}\n' +
-            '        </button>\n' +
-            '        <button type="button" class="md-dialog-submit btn btn-primary" data-dismiss="modal">\n' +
-            '          {DIALOG_SUBMIT_ICON} {DIALOG_SUBMIT_TEXT}\n' +
-            '        </button>\n' +
-            '      </div>\n' +
-            '    </div>\n' +
-            '</div>',
-            dialogClose: '<button type="button" class="close" data-dismiss="modal" aria-label="Close">\n' +
-            '  <span aria-hidden="true">&times;</span>\n' +
-            '</button>\n',
+                '  <div class="modal-dialog">\n' +
+                '    <div class="modal-content">\n' +
+                '      <div class="modal-header">\n' +
+                '         {HEADER}\n' +
+                '      </div>\n' +
+                '      <div class="modal-body">\n' +
+                '        <input class="md-dialog-input form-control">\n' +
+                '        <input class="md-dialog-title form-control">\n' +
+                '        <div class="md-dialog-content"></div>\n' +
+                '      </div>\n' +
+                '      <div class="modal-footer">\n' +
+                '        <button type="button" class="md-dialog-cancel btn btn-default btn-outline-secondary" ' + dataDismiss + '="modal">\n' +
+                '          {DIALOG_CANCEL_ICON} {DIALOG_CANCEL_TEXT}\n' +
+                '        </button>\n' +
+                '        <button type="button" class="md-dialog-submit btn btn-primary" ' + dataDismiss + '="modal">\n' +
+                '          {DIALOG_SUBMIT_ICON} {DIALOG_SUBMIT_TEXT}\n' +
+                '        </button>\n' +
+                '      </div>\n' +
+                '    </div>\n' +
+                '</div>',
+            dialogClose: '<button type="button" class="md-dialog-close" ' + dataDismiss + '="modal" aria-label="Close">\n' +
+                '  <span aria-hidden="true">&times;</span>\n' +
+                '</button>\n',
             htmlMeta: '<!DOCTYPE html>\n' +
-            '  <meta http-equiv="Content-Type" content="text/html,charset=UTF-8"/>\n' +
-            '  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>\n',
+                '  <meta http-equiv="Content-Type" content="text/html,charset=UTF-8"/>\n' +
+                '  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>\n',
             exportCssJs: '{EXPORT_PREPEND_CSS_JS}\n' +
-            '<style>\n' +
-            '  body{margin:20px;padding:20px;border:1px solid #ddd;border-radius:5px;}\n' +
-            '  .md-codeblock{padding:5px 8px;background-color:#f5f5f5;border:1px solid #ddd;border-radius:0}\n' +
-            '  .md-blockquote{border-left:5px solid #eee;padding: 10px 20px}\n' +
-            '  .md-line img{max-width:100%}\n' +
-            '</style>',
+                '<style>\n' +
+                '  body{margin:20px;padding:20px;border:1px solid #ddd;border-radius:5px;}\n' +
+                '  .md-codeblock{padding:5px 8px;background-color:#f5f5f5;border:1px solid #ddd;border-radius:0}\n' +
+                '  .md-blockquote{border-left:5px solid #eee;padding: 10px 20px}\n' +
+                '  .md-line img{max-width:100%}\n' +
+                '</style>',
             exportHeader: '> - - -\n' +
-            '> Markdown Export\n' +
-            '> ==============\n' +
-            '> *Generated {TODAY} by {CREDITS}*\n' +
-            '> - - -\n\n',
+                '> Markdown Export\n' +
+                '> ==============\n' +
+                '> *Generated {TODAY} by {CREDITS}*\n' +
+                '> - - -\n\n',
             hint: '<ul>\n' +
-            '  <li><p>You may follow the {LINK_CM} specification (generated via {LINK_MI} plugin) for writing your markdown text.</p></li>\n' +
-            '  <li><p>In order to use the formatting buttons on the toolbar, you generally need to highlight a text ' +
-            '  within the editor on which the formatting is to be applied. You can also undo the format action on the ' +
-            '  highlighted text by clicking the button again (for most buttons).</p></li>\n' +
-            '  <li><p>Keyboard access shortcuts for buttons:</p>' +
-            '    {ACCESS_KEYS}' +
-            '  </li>\n' +
-            '</ul>'
+                '  <li><p>You may follow the {LINK_CM} specification (generated via {LINK_MI} plugin) for writing your markdown text.</p></li>\n' +
+                '  <li><p>In order to use the formatting buttons on the toolbar, you generally need to highlight a text ' +
+                '  within the editor on which the formatting is to be applied. You can also undo the format action on the ' +
+                '  highlighted text by clicking the button again (for most buttons).</p></li>\n' +
+                '  <li><p>Keyboard access shortcuts for buttons:</p>' +
+                '    {ACCESS_KEYS}' +
+                '  </li>\n' +
+                '</ul>'
         },
         icons: {
             undo: '<span class="fas fa-fw fa-undo"></span>',
@@ -446,7 +485,7 @@
             hint: 'btn btn-info'
         },
         dropdownCss: {
-            emoji: 'md-emojies-list pull-right float-right'
+            emoji: 'md-emojies-list ' + floatRight
         },
         buttonLabels: {
             export: 'Export',
@@ -715,11 +754,9 @@
             if (!$el.attr('id')) {
                 $el.attr('id', $h.uniqueId());
             }
-            self.isBs4 = String(self.bsVersion).substring(0, 1) === '4';
             if (self.exportPrependCssJs === undefined) {
                 // noinspection CssUnusedSymbol
-                self.exportPrependCssJs = '<link href="https://maxcdn.bootstrapcdn.com/bootstrap/' +
-                    (self.isBs4 ? $h.BS4_VER : $h.BS3_VER) + '/css/bootstrap.min.css" rel="stylesheet">';
+                self.exportPrependCssJs = '<link href="' + $h.getBsCss() + '" rel="stylesheet">';
             }
             self.setDefaults('icons');
             self.setDefaults('buttonTitles');
@@ -1207,10 +1244,10 @@
         getLayout: function (template) {
             var self = this, header, title, btnClose, out = self.getConfig('templates', template) || $h.EMPTY, tag;
             if (template === 'dialog') {
-                tag = self.isBs4 ? 'h5' : 'h4';
+                tag = $h.getBsProp('tagDialogHeader');
                 title = '<' + tag + ' class="md-dialog-head-title modal-title"></' + tag + '>';
                 btnClose = self.getConfig('templates', 'dialogClose');
-                header = self.isBs4 ? title + '\n' + btnClose : btnClose + '\n' + title;
+                header = $h.getBsProp('layoutDialogHeader').replace('{TITLE}', title).replace('{CLOSE}', btnClose);
                 out = out.replace('{HEADER}', header)
                     .replace('{DIALOG_CANCEL_ICON}', self.renderIcon('dialogCancel'))
                     .replace('{DIALOG_SUBMIT_ICON}', self.renderIcon('dialogSubmit'))
@@ -1434,7 +1471,7 @@
                 $preview.focus();
             }
         },
-        escapeFullScreen: function(e) {
+        escapeFullScreen: function (e) {
             var self = this;
             if (self.enableEscKeyFullScreen && self.$container.hasClass('md-fullscreen-overlay') && e.keyCode == 27) {
                 self.toggleFullScreen();
@@ -1738,7 +1775,7 @@
             }).html(out);
             out = $div.append($a).html();
             $div.remove();
-            return self.isBs4 ? out : '<li>' + out + '</li>';
+            return $h.getBsProp('layoutMenuItem').replace('{CONTENT}', out);
         },
         getEmojies: function () {
             var self = this, out = '';
@@ -1765,21 +1802,26 @@
         },
         getModeButton: function (type) {
             var self = this, css = self.getConfig('buttonCss', type) || self.defaultButtonCss || '', checked = '',
-                mode = type.substr(4).toLowerCase(), key = self.getConfig('buttonAccessKeys', type) || '';
+                mode = type.substr(4).toLowerCase(), key = self.getConfig('buttonAccessKeys', type) || '',
+                id = $h.uniqueId() + type;
             if (self.defaultMode === mode) {
-                css += ' active';
                 checked = ' checked';
             }
-            return '<label class="' + css + '" title="' + self.getConfig('buttonTitles', type) + '">' +
-                '<input type="radio" value="' + type + '" name="mdMode" autocomplete="off" accesskey="' + key +
-                '"' + checked + '>' + self.renderIcon(type) + '</label>';
+            return $h.getBsProp('layoutBtnRadioGroup')
+                .replaceAll('{ID}', id)
+                .replaceAll('{LABEL}', self.renderIcon(type))
+                .replaceAll('{LABEL_TITLE}', self.getConfig('buttonTitles', type))
+                .replaceAll('{LABEL_CSS}', css)
+                .replaceAll('{VALUE}', type)
+                .replaceAll('{KEY}', key)
+                .replaceAll('{CHECK}', checked);
         },
         renderButton: function (key) {
             var self = this, $btn, $div, icon, title, label, t, i, out, btnCss, icon = self.getConfig('icons', key),
                 css = 'md-btn-' + key, dropCss, defDropCss = self.getConfig('dropdownCss', key),
                 isValid = key === 'mode' || icon !== undefined || self.getConfig('buttonActions', key) !== undefined,
                 isHidden = key === 'emoji' && !self.enableEmojies || self.hiddenActions.indexOf(key) > -1,
-                tag = self.isBs4 && key !== 'emoji' ? 'div' : 'ul';
+                tag = !$h.isBs(3) && key !== 'emoji' ? 'div' : 'ul';
             if (!isValid || isHidden || (!self.enableUndoRedo && (key === 'undo' || key === 'redo' || key === 'editor'))) {
                 return $h.EMPTY;
             }
@@ -1803,7 +1845,7 @@
                 case 'emoji':
                 case 'export':
                 case 'heading':
-                    $btn.html(label + ' ').attr({'data-toggle': 'dropdown'})
+                    $btn.html(label + ' ').attr($h.getBsProp('dataPrefix') + 'toggle', 'dropdown')
                         .append('<span class="caret"></span>').addClass(btnCss + ' dropdown-toggle');
                     dropCss = defDropCss ? 'dropdown-menu ' + defDropCss : 'dropdown-menu';
                     out = '<' + tag + ' class="' + dropCss + '">\n';
@@ -1917,7 +1959,6 @@
     $.fn.markdownEditor.defaults = {
         language: 'en',
         theme: null, // default (uses fa5 theme)
-        bsVersion: $h.BS4_VER, // default (uses bs4 version)
         defaultMode: 'editor',
         enableUndoRedo: true,
         enableSplitMode: true,
