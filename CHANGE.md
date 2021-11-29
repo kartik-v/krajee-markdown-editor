@@ -1,6 +1,12 @@
 Change Log: `krajee-markdown-editor`
 ====================================
 
+## version 1.0.1
+
+**Date:** _under development_
+
+- (enh #8): Correct typo in README.
+
 ## version 1.0.0
 
 **Date:** 14-Sep-2021

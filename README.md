@@ -20,7 +20,8 @@
 [![Monthly Downloads](https://poser.pugx.org/kartik-v/krajee-markdown-editor/d/monthly)](https://packagist.org/packages/kartik-v/krajee-markdown-editor)
 
 </div>
-A Bootsrap styled markdown editor that converts a native HTML textarea to an advanced markdown editor. The editor offers live preview, export, full screen mode, and more features. The editor includes inbuilt support for markdown parsing using [markdown-it JS based parser](https://markdown-it.github.io/). However, the editor can support any markdown parser via javascript library / method or even a server based parser via an ajax action. Other markdown parsers are configurable (both as a server call OR a local JS method/library). In addition, the plugin allows custom button actions and properties to be setup.
+
+A Bootstrap styled markdown editor that converts a native HTML textarea to an advanced markdown editor. The editor offers live preview, export, full screen mode, and more features. The editor includes inbuilt support for markdown parsing using [markdown-it JS based parser](https://markdown-it.github.io/). However, the editor can support any markdown parser via javascript library / method or even a server based parser via an ajax action. Other markdown parsers are configurable (both as a server call OR a local JS method/library). In addition, the plugin allows custom button actions and properties to be setup.
 
 ## Features
 
